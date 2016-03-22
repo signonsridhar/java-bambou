@@ -36,6 +36,8 @@ public abstract class RestSession {
 	public void reset() {
 		rootObject = null;
 		loginController.setApiKey(null);
+		
+		RestSessionContext.session.set(null);
 	}
 
 	protected abstract RestRootObject createRootObject();

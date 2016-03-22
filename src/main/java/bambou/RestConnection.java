@@ -22,6 +22,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -40,7 +41,7 @@ public class RestConnection {
 	private static final String ORGANIZATION_HEADER_KEY = "X-Nuage-Organization";
 	private static final String AUTH_HEADER_KEY = "Authorization";
 
-	private RestTemplate restTemplate;
+	private static RestOperations restOperations;
 	private ObjectMapper objectMapper;
 	private RestResponse response;
 	private RestRequest request;
@@ -49,21 +50,28 @@ public class RestConnection {
 	public RestConnection(RestRequest request) {
 		this.request = request;
 
-		restTemplate = new RestTemplate();
-		restTemplate.setErrorHandler(new ResponseErrorHandler() {
-			@Override
-			public boolean hasError(ClientHttpResponse arg0) throws IOException {
-				return false;
-			}
-
-			@Override
-			public void handleError(ClientHttpResponse arg0) throws IOException {
-			}
-		});
+		if (restOperations == null) {
+			RestTemplate restTemplate = new RestTemplate();
+			restTemplate.setErrorHandler(new ResponseErrorHandler() {
+				@Override
+				public boolean hasError(ClientHttpResponse arg0) throws IOException {
+					return false;
+				}
+	
+				@Override
+				public void handleError(ClientHttpResponse arg0) throws IOException {
+				}
+			});
+			restOperations = restTemplate;
+		}
 		objectMapper = new ObjectMapper();
 		disableSslVerification();
 	}
 
+	static void setRestOperations(RestOperations restOperations) {
+		RestConnection.restOperations = restOperations;
+	}
+	
 	public Map<String, Object> getUserInfo() {
 		return userInfo;
 	}
@@ -140,7 +148,7 @@ public class RestConnection {
 			uri += (uri.indexOf('?') >= 0) ? ";" + params : "?" + params;
 		}
 
-		ResponseEntity<String> response = restTemplate.exchange(uri, method, request, String.class);
+		ResponseEntity<String> response = restOperations.exchange(uri, method, request, String.class);
 		String responseBody = response.getBody();
 		HttpStatus statusCode = response.getStatusCode();
 
@@ -148,7 +156,7 @@ public class RestConnection {
 			HttpStatus.Series series = statusCode.series();
 			if (series != HttpStatus.Series.CLIENT_ERROR && series != HttpStatus.Series.SERVER_ERROR) {
 				T body = (responseBody != null) ? objectMapper.readValue(responseBody, responseType) : null;
-				return new ResponseEntity<T>(body, response.getStatusCode());
+				return new ResponseEntity<T>(body, response.getHeaders(), response.getStatusCode());
 			} else {
 				try {
 					// Debug

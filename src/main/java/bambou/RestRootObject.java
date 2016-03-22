@@ -6,7 +6,7 @@ import org.springframework.http.HttpMethod;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public abstract class RestRootObject extends RestObject {
+public class RestRootObject extends RestObject {
 	private String newPassword;
 
 	@JsonProperty(value = "userName")
