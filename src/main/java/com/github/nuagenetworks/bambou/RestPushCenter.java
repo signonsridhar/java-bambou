@@ -46,7 +46,9 @@ import com.github.nuagenetworks.bambou.model.Events;
 public class RestPushCenter {
 
 	private static final Logger logger = LoggerFactory.getLogger(RestPushCenter.class);
-
+	
+	private static final int SLEEP_PERIOD_IN_MILLIS = 2000;
+	
 	private String url;
 	private boolean stopPollingEvents;
 	private boolean isRunning;
@@ -167,7 +169,7 @@ public class RestPushCenter {
 
 				// Pause and try again
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(SLEEP_PERIOD_IN_MILLIS);
 				} catch (InterruptedException e) {
 				}
 			}
