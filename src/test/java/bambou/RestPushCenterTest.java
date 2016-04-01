@@ -32,7 +32,7 @@ public class RestPushCenterTest {
 		RestConnection.setRestOperations(restOperations);
 
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
-		        EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("{}", HttpStatus.OK)).times(1, 200);
+		        EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("{}", HttpStatus.OK)).atLeastOnce();
 		EasyMock.replay(restOperations);
 
 		RestSession session = new TestRestSession();
