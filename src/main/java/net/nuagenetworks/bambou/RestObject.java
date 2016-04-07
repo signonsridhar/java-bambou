@@ -286,7 +286,7 @@ public class RestObject implements RestObjectOperations {
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL && response.getBody().length == 1) {
 			// Success
 			RestObject responseRestObj = response.getBody()[0];
-			BambouUtils.copyJsonProperties(responseRestObj, this);
+			BambouUtils.copyJsonProperties(responseRestObj, childRestObj);
 
 			if (commit) {
 				addChild(childRestObj);
