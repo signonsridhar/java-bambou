@@ -88,11 +88,11 @@ public class BambouUtils {
 	}
 
 	public static <T extends RestObject> void setTemplateId(T restObj, RestObject template) throws RestException {
-		PropertyDescriptor pd = getPropertyDescriptor(restObj, "templateId");
+		PropertyDescriptor pd = getPropertyDescriptor(restObj, "templateID");
 		if (pd != null) {
 			setRestObjectProperty(pd, restObj, template.getId());
 		} else {
-			throw new RestException(String.format("Cannot instantiate a child that does not have a templateId property: %s", template));
+			throw new RestException(String.format("Cannot instantiate a child that does not have a templateID property: %s", restObj));
 		}
 	}
 

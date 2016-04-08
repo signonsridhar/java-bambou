@@ -182,6 +182,8 @@ public class RestObjectTest {
 		// Expect object's fetcher to contain the new child object
 		Assert.assertEquals(1, object.getChildObjectFetcher().size());
 		Assert.assertTrue(object.getChildObjectFetcher().get(0) == childObject);
+
+		// Expect child object's properties to be set
 		Assert.assertEquals(childId, childObject.getId());
 		Assert.assertEquals(childPropertyValue, childObject.getMyOtherProperty());
 
@@ -193,6 +195,9 @@ public class RestObjectTest {
 	@Test
 	public void testInstantiateChildObject() throws RestException, RestClientException, JsonProcessingException {
 		String id = "12345";
+		String templateId = "54321";
+		String childId = "67890";
+		String childPropertyValue = "MyPropertyValue";
 
 		// Create object
 		TestObject object = new TestObject();
@@ -200,23 +205,29 @@ public class RestObjectTest {
 
 		// Create child template object
 		TestChildTemplateObject childTemplate = new TestChildTemplateObject();
-		childTemplate.setId("67890");
+		childTemplate.setId(templateId);
 
 		// Create child object
-		TestChildObject childObject = new TestChildObject();
+		TestChildObject refChildObject = new TestChildObject();
+		refChildObject.setTemplateID(templateId);
+		refChildObject.setId(childId);
+		refChildObject.setMyOtherProperty(childPropertyValue);
 
 		// Start session
-		startSession(restOperations, "object/" + id + "/childobject", HttpMethod.POST, HttpStatus.OK, mapper.writeValueAsString(Arrays.asList(childObject)));
+		startSession(restOperations, "object/" + id + "/childobject", HttpMethod.POST, HttpStatus.OK, mapper.writeValueAsString(Arrays.asList(refChildObject)));
 
 		// Instantiate child
+		TestChildObject childObject = new TestChildObject();
 		object.instantiateChild(childObject, childTemplate);
-
-		// Expect template id to be set
-		Assert.assertEquals(childTemplate.getId(), childObject.getTemplateId());
 
 		// Expect object's fetcher to contain the new child object
 		Assert.assertEquals(1, object.getChildObjectFetcher().size());
 		Assert.assertTrue(object.getChildObjectFetcher().get(0) == childObject);
+
+		// Expect child object's properties to be set
+		Assert.assertEquals(templateId, childObject.getTemplateID());
+		Assert.assertEquals(childId, childObject.getId());
+		Assert.assertEquals(childPropertyValue, childObject.getMyOtherProperty());
 
 		// Verify mock calls
 		EasyMock.verify(restOperations);
