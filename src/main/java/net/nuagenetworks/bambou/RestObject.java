@@ -310,21 +310,7 @@ public class RestObject implements RestObjectOperations {
 		}
 		BambouUtils.setTemplateId(childRestObj, fromTemplate);
 
-		String params = BambouUtils.getResponseChoiceParam(responseChoice);
-		ResponseEntity<RestObject[]> response = session.sendRequestWithRetry(HttpMethod.POST, getResourceUrlForChildType(session, childRestObj.getClass()),
-		        params, null, childRestObj, BambouUtils.getArrayClass(childRestObj));
-		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL && response.getBody().length == 1) {
-			// Success
-			RestObject responseRestObj = response.getBody()[0];
-			BambouUtils.copyJsonProperties(responseRestObj, childRestObj);
-
-			if (commit) {
-				addChild(childRestObj);
-			}
-		} else {
-			// Error
-			throw new RestException("Response received with status code: " + response.getStatusCode());
-		}
+		createChild(session, childRestObj, responseChoice, commit);
 	}
 
 	@Override
