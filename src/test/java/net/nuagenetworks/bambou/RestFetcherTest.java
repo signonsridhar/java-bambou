@@ -90,6 +90,28 @@ public class RestFetcherTest {
 	}
 
 	@Test
+	public void testGet2() throws RestException, JsonProcessingException {
+		// Create child objects
+		List<RestObject> refChildObjects = new ArrayList<RestObject>();
+		TestChildObject childObject1 = new TestChildObject();
+		childObject1.setId("1");
+		refChildObjects.add(childObject1);
+		TestChildObject childObject2 = new TestChildObject();
+		childObject2.setId("2");
+		refChildObjects.add(childObject2);
+
+		// Start session
+		startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK, mapper.writeValueAsString(refChildObjects), null);
+
+		TestObject object = new TestObject();
+		List<TestChildObject> childObjects = object.getChildObjectFetcher().get();
+		Assert.assertEquals(2, childObjects.size());
+		Assert.assertEquals(refChildObjects, childObjects);
+		Assert.assertEquals(2, object.getChildObjectFetcher().size());
+		Assert.assertEquals(refChildObjects, object.getChildObjectFetcher());
+	}
+
+	@Test
 	public void testGetFirst() throws JsonProcessingException, RestException {
 		// Create child objects
 		List<RestObject> refChildObjects = new ArrayList<RestObject>();
