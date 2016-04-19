@@ -139,8 +139,13 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 		ResponseEntity<T[]> response = session.sendRequestWithRetry(HttpMethod.GET, resourceUrl, null, headers, null,
 		        BambouUtils.getArrayClass(childRestObjClass));
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL) {
-			// Success
-			return merge(response.getBody(), commit);
+			// Success			
+			T[] restObjs = response.getBody();
+			if (restObjs != null) {
+				return merge(restObjs, commit);
+			} else {
+				return new ArrayList<T>();
+			}
 		} else {
 			// Error
 			throw new RestException("Response received with status code: " + response.getStatusCode());
