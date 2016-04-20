@@ -114,6 +114,7 @@ public class RestObjectTest {
 
 		// Expect some object properties to be set
 		Assert.assertEquals(id, object.getId());
+		Assert.assertEquals("object", object.getRestName());
 		Assert.assertEquals(refObject.getMyProperty(), object.getMyProperty());
 
 		// Verify mock calls

@@ -35,6 +35,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.nuagenetworks.bambou.annotation.RestEntity;
@@ -349,10 +350,20 @@ public class RestObject implements RestObjectOperations {
 		}
 	}
 
+	@JsonIgnore
+	public String getRestName() {
+		return getRestName(getClass());
+	}
+	
+	@JsonIgnore
+	protected static String getRestName(Class<?> restObjClass) {
+		RestEntity annotation = restObjClass.getAnnotation(RestEntity.class);
+		return annotation.restName();		
+	}
+	
 	private void addChild(RestObject childRestObj) throws RestException {
 		// Get the object's resource name
-		RestEntity annotation = childRestObj.getClass().getAnnotation(RestEntity.class);
-		String restName = annotation.restName();
+		String restName = getRestName(childRestObj.getClass());
 
 		// Add child object to registered fetcher for child type
 		@SuppressWarnings("unchecked")
@@ -366,6 +377,7 @@ public class RestObject implements RestObjectOperations {
 		}
 	}
 
+	@JsonIgnore
 	protected String getResourceUrl(RestSession<?> session) {
 		// Get the object's resource name
 		RestEntity annotation = getClass().getAnnotation(RestEntity.class);
@@ -382,6 +394,7 @@ public class RestObject implements RestObjectOperations {
 		}
 	}
 
+	@JsonIgnore
 	protected String getResourceUrlForChildType(RestSession<?> session, Class<?> childRestObjClass) {
 		// Get the child object's resource name
 		RestEntity annotation = childRestObjClass.getAnnotation(RestEntity.class);
@@ -403,13 +416,7 @@ public class RestObject implements RestObjectOperations {
 		RestObject restObj1 = this;
 		RestObject restObj2 = (RestObject) obj;
 
-		RestEntity restEntity1 = restObj1.getClass().getAnnotation(RestEntity.class);
-		RestEntity restEntity2 = restObj2.getClass().getAnnotation(RestEntity.class);
-		if (restEntity1 == null || restEntity2 == null) {
-			throw new IllegalStateException();
-		}
-
-		if (!restEntity1.restName().equals(restEntity2.restName())) {
+		if (!restObj1.getRestName().equals(restObj2.getRestName())) {
 			return false;
 		}
 

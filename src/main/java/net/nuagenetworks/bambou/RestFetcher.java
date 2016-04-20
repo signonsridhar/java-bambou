@@ -36,7 +36,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import net.nuagenetworks.bambou.annotation.RestEntity;
 import net.nuagenetworks.bambou.operation.RestFetcherOperations;
 import net.nuagenetworks.bambou.util.BambouUtils;
 
@@ -60,8 +59,7 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 		this.childRestObjClass = childRestObjClass;
 
 		// Get the child object's REST name
-		RestEntity annotation = childRestObjClass.getAnnotation(RestEntity.class);
-		String childRestObjRestName = annotation.restName();
+		String childRestObjRestName = RestObject.getRestName(childRestObjClass);
 
 		// Register fetcher
 		parentRestObj.registerFetcher(this, childRestObjRestName);
