@@ -184,6 +184,10 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 		List<String> currentIds = new ArrayList<String>();
 
 		for (T restObj : restObjs) {
+			if (restObj == null) {
+				continue;
+			}
+
 			fetchedRestObjs.add(restObj);
 
 			if (!shouldCommit) {

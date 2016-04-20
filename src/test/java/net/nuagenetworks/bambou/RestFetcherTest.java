@@ -158,6 +158,20 @@ public class RestFetcherTest {
 	}
 
 	@Test
+	public void testFetchNullContent() throws JsonProcessingException, RestException {
+		List<RestObject> refChildObjects = new ArrayList<RestObject>();
+		refChildObjects.add(null);
+
+		// Start session
+		startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK, mapper.writeValueAsString(refChildObjects), null);
+
+		TestObject object = new TestObject();
+		TestChildObjectFetcher fetcher = new TestChildObjectFetcher(object);
+		List<TestChildObject> childObjects = fetcher.fetch();
+		Assert.assertEquals(0, childObjects.size());
+	}
+
+	@Test
 	public void testFetchNoContent() throws JsonProcessingException, RestException {
 		// Start session
 		startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK, null, null);
