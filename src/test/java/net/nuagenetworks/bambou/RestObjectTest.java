@@ -264,8 +264,40 @@ public class RestObjectTest {
 		EasyMock.verify(restOperations);
 	}
 
-	private RestSession<TestRootObject> startSession(RestOperations restOperations, String urlSuffix, HttpMethod method, HttpStatus responseStatus,
+	@Test
+	public void testFetchObjectWith401Response() throws RestException, RestClientException, JsonProcessingException {
+		String id = "12345";
+
+		// Create response object to fetch REST call
+		TestObject refObject = new TestObject();
+		refObject.setId(id);
+		refObject.setMyProperty("MyValue");
+
+		// Start session
+		Capture<HttpEntity<?>> capturedHttpEntity = startSession(restOperations, "object/" + id, HttpMethod.GET, HttpStatus.OK, mapper.writeValueAsString(Arrays.asList(refObject)), true);
+		
+		// Fetch object
+		TestObject object = new TestObject();
+		object.setId(id);
+		object.fetch();
+
+		// Expect some object properties to be set
+		Assert.assertEquals("XREST bWFydGluOjI=", capturedHttpEntity.getValue().getHeaders().get("Authorization").get(0));
+		Assert.assertEquals(id, object.getId());
+		Assert.assertEquals("object", object.getRestName());
+		Assert.assertEquals(refObject.getMyProperty(), object.getMyProperty());
+
+		// Verify mock calls
+		EasyMock.verify(restOperations);
+	}
+
+	private Capture<HttpEntity<?>> startSession(RestOperations restOperations, String urlSuffix, HttpMethod method, HttpStatus responseStatus,
 	        String responseString) throws RestException {
+		return startSession(restOperations, urlSuffix, method, responseStatus, responseString, false);
+	}
+
+	private Capture<HttpEntity<?>> startSession(RestOperations restOperations, String urlSuffix, HttpMethod method, HttpStatus responseStatus,
+	        String responseString, boolean simulate401Response) throws RestException {
 		String username = "martin";
 		String password = "martin";
 		String enterprise = "martin";
@@ -278,7 +310,13 @@ public class RestObjectTest {
 		// Expected REST calls
 		EasyMock.reset(restOperations);
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
-		        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("[{}]", HttpStatus.OK));
+		        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"1\" }]", HttpStatus.OK));
+		if (simulate401Response) {
+			EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/" + urlSuffix), EasyMock.eq(method),
+			        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("", HttpStatus.UNAUTHORIZED));
+			EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
+			        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"2\" }]", HttpStatus.OK));
+		}
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/" + urlSuffix), EasyMock.eq(method),
 		        EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(responseString, responseStatus));
 		EasyMock.replay(restOperations);
@@ -292,6 +330,6 @@ public class RestObjectTest {
 		session.setVersion(version);
 		session.start();
 
-		return session;
+		return capturedHttpEntity;
 	}
 }

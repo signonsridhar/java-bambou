@@ -268,8 +268,7 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
 
 		headers.set(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_JSON);
 		headers.set(ORGANIZATION_HEADER, getEnterprise());
-		String authenticationHeader = getAuthenticationHeader();
-		headers.set(HttpHeaders.AUTHORIZATION, authenticationHeader);
+		headers.set(HttpHeaders.AUTHORIZATION, getAuthenticationHeader());
 
 		try {
 			return restClientService.sendRequest(method, url, headers, requestObj, responseType);
@@ -280,6 +279,10 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
 				// a new API key might get issued as a result
 				reset();
 				authenticate();
+
+				// Update authorization header with new API key
+				headers.set(HttpHeaders.AUTHORIZATION, getAuthenticationHeader());
+
 				return restClientService.sendRequest(method, url, headers, requestObj, responseType);
 			} else {
 				throw ex;
