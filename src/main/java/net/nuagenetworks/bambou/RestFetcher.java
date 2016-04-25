@@ -65,6 +65,10 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 		parentRestObj.registerFetcher(this, childRestObjRestName);
 	}
 
+	protected RestObject getParentRestObj() {
+		return parentRestObj;
+	}
+
 	@Override
 	public List<T> get() throws RestException {
 		return RestSession.getCurrentSession().get(this);
@@ -137,7 +141,7 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 		ResponseEntity<T[]> response = session.sendRequestWithRetry(HttpMethod.GET, resourceUrl, null, headers, null,
 		        BambouUtils.getArrayClass(childRestObjClass));
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL) {
-			// Success			
+			// Success
 			T[] restObjs = response.getBody();
 			if (restObjs != null) {
 				return merge(restObjs, commit);
