@@ -48,9 +48,9 @@ import net.nuagenetworks.bambou.model.Events;
 public class RestPushCenter {
 
 	private static final Logger logger = LoggerFactory.getLogger(RestPushCenter.class);
-	
+
 	private static final int SLEEP_PERIOD_IN_MILLIS = 2000;
-	
+
 	private String url;
 	private boolean stopPollingEvents;
 	private boolean isRunning;
@@ -141,6 +141,10 @@ public class RestPushCenter {
 				// Get the next events
 				ResponseEntity<Events> response = sendRequest(uuid);
 				Events events = (Events) response.getBody();
+				if (events == null) {
+					// No events, poll again
+					continue;
+				}
 
 				if (stopPollingEvents) {
 					break;
@@ -190,7 +194,7 @@ public class RestPushCenter {
 		try {
 			// Send poll request to server
 			response = session.sendRequestWithRetry(HttpMethod.GET, eventsUrl, params, null, null, Events.class);
-		} catch(HttpClientErrorException ex) {
+		} catch (HttpClientErrorException ex) {
 			// In case of a 400/Bad Request: re-send request without uuid in order to get a new one
 			if (ex.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				response = sendRequest(null);
