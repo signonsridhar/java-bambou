@@ -190,7 +190,42 @@ public class RestObjectTest {
 
 		// Verify mock calls
 		EasyMock.verify(restOperations);
+	}
 
+	@Test
+	public void testCreateChildObjectWith201AndMultipleObjectsInResponse() throws RestException, RestClientException, JsonProcessingException {
+		String id = "12345";
+		String childId = "67890";
+		String childPropertyValue = "MyPropertyValue";
+
+		// Create object
+		TestObject object = new TestObject();
+		object.setId(id);
+
+		// Create child objects
+		TestChildObject refChildObject1 = new TestChildObject();
+		refChildObject1.setId(childId);
+		refChildObject1.setMyOtherProperty(childPropertyValue);
+		TestChildObject refChildObject2 = new TestChildObject();
+		refChildObject2.setId("54321");
+
+		// Start session
+		startSession(restOperations, "object/" + id + "/childobject", HttpMethod.POST, HttpStatus.CREATED, mapper.writeValueAsString(Arrays.asList(refChildObject1, refChildObject2)));
+
+		// Create child
+		TestChildObject childObject = new TestChildObject();
+		object.createChild(childObject);
+
+		// Expect object's fetcher to contain the new child object
+		Assert.assertEquals(1, object.getChildObjectFetcher().size());
+		Assert.assertTrue(object.getChildObjectFetcher().get(0) == childObject);
+
+		// Expect child object's properties to be set
+		Assert.assertEquals(childId, childObject.getId());
+		Assert.assertEquals(childPropertyValue, childObject.getMyOtherProperty());
+
+		// Verify mock calls
+		EasyMock.verify(restOperations);
 	}
 
 	@Test

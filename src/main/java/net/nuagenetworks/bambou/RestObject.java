@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +45,8 @@ import net.nuagenetworks.bambou.operation.RestObjectOperations;
 import net.nuagenetworks.bambou.util.BambouUtils;
 
 public class RestObject implements RestObjectOperations {
+
+	private static final Logger logger = LoggerFactory.getLogger(RestObject.class);
 
 	@JsonProperty(value = "ID")
 	protected String id;
@@ -284,8 +288,12 @@ public class RestObject implements RestObjectOperations {
 		String params = BambouUtils.getResponseChoiceParam(responseChoice);
 		ResponseEntity<RestObject[]> response = session.sendRequestWithRetry(HttpMethod.POST, getResourceUrlForChildType(session, childRestObj.getClass()),
 		        params, null, childRestObj, BambouUtils.getArrayClass(childRestObj));
-		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL && response.getBody().length == 1) {
+		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL && response.getBody().length >= 1) {
 			// Success
+			if (response.getBody().length > 1) {
+				logger.warn("HTTP response to POST request constains more than one object. Only processing first object");
+			}
+			
 			RestObject responseRestObj = response.getBody()[0];
 			BambouUtils.copyJsonProperties(responseRestObj, childRestObj);
 
