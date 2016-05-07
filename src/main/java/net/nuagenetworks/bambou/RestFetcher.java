@@ -138,7 +138,7 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 	        boolean commit) throws RestException {
 		String resourceUrl = getResourceUrl(session);
 		HttpHeaders headers = prepareHeaders(filter, orderBy, groupBy, page, pageSize);
-		ResponseEntity<T[]> response = session.sendRequestWithRetry(HttpMethod.GET, resourceUrl, null, headers, null,
+		ResponseEntity<T[]> response = session.sendRequestWithRetry(HttpMethod.GET, resourceUrl, queryParameters, headers, null,
 		        BambouUtils.getArrayClass(childRestObjClass));
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL) {
 			// Success
