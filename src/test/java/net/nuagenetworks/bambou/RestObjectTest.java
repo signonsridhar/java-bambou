@@ -229,6 +229,35 @@ public class RestObjectTest {
 	}
 
 	@Test
+	public void testCreateChildObjectWith409Response() throws RestException, RestClientException, JsonProcessingException {
+		String id = "12345";
+
+		// Create object
+		TestObject object = new TestObject();
+		object.setId(id);
+
+		// Expected response
+		String response = "{\"errors\":[{\"property\":\"myProperty\",\"descriptions\":[{\"title\":\"Invalid input\",\"description\":\"This value is mandatory.\"}]}],\"internalErrorCode\":5001}";
+
+		// Start session
+		startSession(restOperations, "object/" + id + "/childobject", HttpMethod.POST, HttpStatus.CONFLICT, response);
+
+		try {
+			// Create child
+			TestChildObject childObject = new TestChildObject();
+			object.createChild(childObject);
+
+			// Exception is expected
+			Assert.assertTrue(false);
+		} catch(RestException ex) {
+			Assert.assertEquals("myProperty: This value is mandatory.", ex.getMessage());
+		}
+
+		// Verify mock calls
+		EasyMock.verify(restOperations);
+	}
+
+	@Test
 	public void testInstantiateChildObject() throws RestException, RestClientException, JsonProcessingException {
 		String id = "12345";
 		String templateId = "54321";

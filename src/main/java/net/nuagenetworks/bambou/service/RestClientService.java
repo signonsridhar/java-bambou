@@ -97,6 +97,10 @@ public class RestClientService {
 						ArrayNode descriptions = (ArrayNode) error.get("descriptions");
 						JsonNode description = descriptions.get(0);
 						String descriptionText = description.get("description").asText();
+						JsonNode property = error.get("property");
+						if (property != null) {
+							descriptionText = property.asText() + ": " + descriptionText;
+						}
 						throw new RestException(descriptionText);
 					} else {
 						throw new RestException(statusCode + " " + statusCode.getReasonPhrase());
