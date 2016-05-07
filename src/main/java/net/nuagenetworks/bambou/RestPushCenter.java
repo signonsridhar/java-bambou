@@ -104,7 +104,7 @@ public class RestPushCenter {
 		}
 
 		// Debug
-		logger.debug("Stopping polling. Waiting for blocking REST call to return");
+		logger.info("Stopping polling. Waiting for blocking REST call to return");
 
 		// Notify polling task to stop
 		stopPollingEvents = true;
@@ -136,7 +136,7 @@ public class RestPushCenter {
 		while (!stopPollingEvents) {
 			try {
 				// Debug
-				logger.debug("Polling events from VSD using uuid=" + uuid);
+				logger.info("Polling events from VSD using uuid=" + uuid);
 
 				// Get the next events
 				ResponseEntity<Events> response = sendRequest(uuid);
@@ -151,7 +151,7 @@ public class RestPushCenter {
 				}
 
 				// Debug
-				logger.debug("Received events: " + events);
+				logger.info("Received events: " + events);
 
 				// Process the events received
 				for (JsonNode event : events.getEvents()) {
@@ -182,7 +182,7 @@ public class RestPushCenter {
 		}
 
 		// Debug
-		logger.debug("Polling stopped");
+		logger.info("Polling stopped");
 	}
 
 	private ResponseEntity<Events> sendRequest(String uuid) throws RestException {
