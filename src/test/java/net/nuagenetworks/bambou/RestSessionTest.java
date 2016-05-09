@@ -98,7 +98,7 @@ public class RestSessionTest {
 		EasyMock.reset(restOperations);
 		Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
-		        .andReturn(new ResponseEntity<String>(HttpStatus.OK));
+				.andReturn(new ResponseEntity<String>(HttpStatus.OK));
 		EasyMock.replay(restOperations);
 
 		ResponseEntity<String> response = session.sendRequestWithRetry(method, url, null, null, content, String.class);
@@ -128,8 +128,8 @@ public class RestSessionTest {
 		rootObject.setApiKey("12345");
 		rootObject.setTestAttr("TestValue");
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
-		        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class)))
-		        .andReturn(new ResponseEntity<String>(mapper.writeValueAsString(Arrays.asList(rootObject)), HttpStatus.OK));
+				EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class)))
+				.andReturn(new ResponseEntity<String>(mapper.writeValueAsString(Arrays.asList(rootObject)), HttpStatus.OK));
 		EasyMock.replay(restOperations);
 
 		session.setUsername(username);

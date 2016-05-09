@@ -91,25 +91,25 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 
 	@Override
 	public List<T> get(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
-	        throws RestException {
+			throws RestException {
 		return RestSession.getCurrentSession().get(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 	}
 
 	@Override
 	public List<T> fetch(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
-	        throws RestException {
+			throws RestException {
 		return RestSession.getCurrentSession().fetch(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 	}
 
 	@Override
 	public T getFirst(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
-	        throws RestException {
+			throws RestException {
 		return RestSession.getCurrentSession().getFirst(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 	}
 
 	@Override
 	public int count(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
-	        throws RestException {
+			throws RestException {
 		return RestSession.getCurrentSession().count(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 	}
 
@@ -135,11 +135,11 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 
 	@Override
 	public List<T> fetch(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters,
-	        boolean commit) throws RestException {
+			boolean commit) throws RestException {
 		String resourceUrl = getResourceUrl(session);
 		HttpHeaders headers = prepareHeaders(filter, orderBy, groupBy, page, pageSize);
 		ResponseEntity<T[]> response = session.sendRequestWithRetry(HttpMethod.GET, resourceUrl, queryParameters, headers, null,
-		        BambouUtils.getArrayClass(childRestObjClass));
+				BambouUtils.getArrayClass(childRestObjClass));
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL) {
 			// Success
 			T[] restObjs = response.getBody();
@@ -156,23 +156,23 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 
 	@Override
 	public List<T> get(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters,
-	        boolean commit) throws RestException {
+			boolean commit) throws RestException {
 		return fetch(session, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 	}
 
 	@Override
 	public T getFirst(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters,
-	        boolean commit) throws RestException {
+			boolean commit) throws RestException {
 		List<T> restObjs = get(session, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 		return (restObjs != null && !restObjs.isEmpty()) ? restObjs.get(0) : null;
 	}
 
 	@Override
 	public int count(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters,
-	        boolean commit) throws RestException {
+			boolean commit) throws RestException {
 		HttpHeaders headers = prepareHeaders(filter, orderBy, groupBy, page, pageSize);
 		ResponseEntity<T[]> response = session.sendRequestWithRetry(HttpMethod.HEAD, getResourceUrl(session), queryParameters, headers, null,
-		        BambouUtils.getArrayClass(childRestObjClass));
+				BambouUtils.getArrayClass(childRestObjClass));
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL && response.getHeaders().containsKey(COUNT_HEADER)) {
 			return Integer.valueOf(response.getHeaders().getFirst(COUNT_HEADER));
 		} else {

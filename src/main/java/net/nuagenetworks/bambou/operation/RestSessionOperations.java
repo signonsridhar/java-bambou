@@ -69,14 +69,14 @@ public interface RestSessionOperations {
 	<T extends RestObject> int count(RestFetcher<T> fetcher) throws RestException;
 
 	<T extends RestObject> List<T> get(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-	        String queryParameters, boolean commit) throws RestException;
+			String queryParameters, boolean commit) throws RestException;
 
 	<T extends RestObject> List<T> fetch(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-	        String queryParameters, boolean commit) throws RestException;
+			String queryParameters, boolean commit) throws RestException;
 
 	<T extends RestObject> T getFirst(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-	        String queryParameters, boolean commit) throws RestException;
+			String queryParameters, boolean commit) throws RestException;
 
 	<T extends RestObject> int count(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-	        String queryParameters, boolean commit) throws RestException;
+			String queryParameters, boolean commit) throws RestException;
 }

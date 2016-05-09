@@ -210,7 +210,8 @@ public class RestObjectTest {
 		refChildObject2.setId("54321");
 
 		// Start session
-		startSession(restOperations, "object/" + id + "/childobject", HttpMethod.POST, HttpStatus.CREATED, mapper.writeValueAsString(Arrays.asList(refChildObject1, refChildObject2)));
+		startSession(restOperations, "object/" + id + "/childobject", HttpMethod.POST, HttpStatus.CREATED,
+				mapper.writeValueAsString(Arrays.asList(refChildObject1, refChildObject2)));
 
 		// Create child
 		TestChildObject childObject = new TestChildObject();
@@ -249,7 +250,7 @@ public class RestObjectTest {
 
 			// Exception is expected
 			Assert.assertTrue(false);
-		} catch(RestException ex) {
+		} catch (RestException ex) {
 			Assert.assertEquals("myProperty: This value is mandatory.", ex.getMessage());
 		}
 
@@ -338,8 +339,9 @@ public class RestObjectTest {
 		refObject.setMyProperty("MyValue");
 
 		// Start session
-		Capture<HttpEntity<?>> capturedHttpEntity = startSession(restOperations, "object/" + id, HttpMethod.GET, HttpStatus.OK, mapper.writeValueAsString(Arrays.asList(refObject)), true);
-		
+		Capture<HttpEntity<?>> capturedHttpEntity = startSession(restOperations, "object/" + id, HttpMethod.GET, HttpStatus.OK,
+				mapper.writeValueAsString(Arrays.asList(refObject)), true);
+
 		// Fetch object
 		TestObject object = new TestObject();
 		object.setId(id);
@@ -356,12 +358,12 @@ public class RestObjectTest {
 	}
 
 	private Capture<HttpEntity<?>> startSession(RestOperations restOperations, String urlSuffix, HttpMethod method, HttpStatus responseStatus,
-	        String responseString) throws RestException {
+			String responseString) throws RestException {
 		return startSession(restOperations, urlSuffix, method, responseStatus, responseString, false);
 	}
 
 	private Capture<HttpEntity<?>> startSession(RestOperations restOperations, String urlSuffix, HttpMethod method, HttpStatus responseStatus,
-	        String responseString, boolean simulate401Response) throws RestException {
+			String responseString, boolean simulate401Response) throws RestException {
 		String username = "martin";
 		String password = "martin";
 		String enterprise = "martin";
@@ -374,15 +376,17 @@ public class RestObjectTest {
 		// Expected REST calls
 		EasyMock.reset(restOperations);
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
-		        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"1\" }]", HttpStatus.OK));
+				EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class)))
+				.andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"1\" }]", HttpStatus.OK));
 		if (simulate401Response) {
 			EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/" + urlSuffix), EasyMock.eq(method),
-			        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("", HttpStatus.UNAUTHORIZED));
+					EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("", HttpStatus.UNAUTHORIZED));
 			EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
-			        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"2\" }]", HttpStatus.OK));
+					EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class)))
+					.andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"2\" }]", HttpStatus.OK));
 		}
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/" + urlSuffix), EasyMock.eq(method),
-		        EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(responseString, responseStatus));
+				EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(responseString, responseStatus));
 		EasyMock.replay(restOperations);
 
 		// Start REST session

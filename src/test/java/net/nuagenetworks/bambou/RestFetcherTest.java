@@ -226,7 +226,7 @@ public class RestFetcherTest {
 
 		// Start session
 		Capture<HttpEntity<?>> capturedHttpEntity = startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK,
-		        mapper.writeValueAsString(refChildObjects), null);
+				mapper.writeValueAsString(refChildObjects), null);
 
 		String filter = "filter";
 		String orderBy = "orderBy";
@@ -264,7 +264,7 @@ public class RestFetcherTest {
 
 		// Start session
 		Capture<HttpEntity<?>> capturedHttpEntity = startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK,
-		        mapper.writeValueAsString(refChildObjects), null);
+				mapper.writeValueAsString(refChildObjects), null);
 
 		String filter = "filter";
 		String orderBy = "orderBy";
@@ -302,7 +302,7 @@ public class RestFetcherTest {
 
 		// Start session
 		Capture<HttpEntity<?>> capturedHttpEntity = startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK,
-		        mapper.writeValueAsString(refChildObjects), null);
+				mapper.writeValueAsString(refChildObjects), null);
 
 		String filter = "filter";
 		String orderBy = "orderBy";
@@ -345,7 +345,7 @@ public class RestFetcherTest {
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("X-Nuage-Count", String.valueOf(refChildObjects.size()));
 		Capture<HttpEntity<?>> capturedHttpEntity = startSession(restOperations, "object/childobject", HttpMethod.HEAD, HttpStatus.OK,
-		        mapper.writeValueAsString(refChildObjects), responseHeaders);
+				mapper.writeValueAsString(refChildObjects), responseHeaders);
 
 		String filter = "filter";
 		String orderBy = "orderBy";
@@ -382,7 +382,8 @@ public class RestFetcherTest {
 		refChildObjects.add(childObject3);
 
 		// Start session
-		Capture<HttpEntity<?>> capturedHttpEntity = startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK, mapper.writeValueAsString(refChildObjects), null, true);
+		Capture<HttpEntity<?>> capturedHttpEntity = startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK,
+				mapper.writeValueAsString(refChildObjects), null, true);
 
 		TestObject object = new TestObject();
 		TestChildObjectFetcher fetcher = new TestChildObjectFetcher(object);
@@ -392,12 +393,12 @@ public class RestFetcherTest {
 	}
 
 	private Capture<HttpEntity<?>> startSession(RestOperations restOperations, String urlSuffix, HttpMethod method, HttpStatus responseStatus,
-	        String responseString, HttpHeaders responseHeaders) throws RestException {
+			String responseString, HttpHeaders responseHeaders) throws RestException {
 		return startSession(restOperations, urlSuffix, method, responseStatus, responseString, responseHeaders, false);
 	}
 
 	private Capture<HttpEntity<?>> startSession(RestOperations restOperations, String urlSuffix, HttpMethod method, HttpStatus responseStatus,
-	        String responseString, HttpHeaders responseHeaders, boolean simulate401Response) throws RestException {
+			String responseString, HttpHeaders responseHeaders, boolean simulate401Response) throws RestException {
 		String username = "martin";
 		String password = "martin";
 		String enterprise = "martin";
@@ -410,16 +411,18 @@ public class RestFetcherTest {
 		// Expected REST calls
 		EasyMock.reset(restOperations);
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
-		        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"1\" }]", HttpStatus.OK));
+				EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class)))
+				.andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"1\" }]", HttpStatus.OK));
 		if (simulate401Response) {
 			EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/" + urlSuffix), EasyMock.eq(method),
-			        EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("", HttpStatus.UNAUTHORIZED));
+					EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("", HttpStatus.UNAUTHORIZED));
 			EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
-			        EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"2\" }]", HttpStatus.OK));
+					EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class)))
+					.andReturn(new ResponseEntity<String>("[{ \"APIKey\": \"2\" }]", HttpStatus.OK));
 		}
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/" + urlSuffix), EasyMock.eq(method),
-		        EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
-		        .andReturn(new ResponseEntity<String>(responseString, responseHeaders, responseStatus));
+				EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
+				.andReturn(new ResponseEntity<String>(responseString, responseHeaders, responseStatus));
 		EasyMock.replay(restOperations);
 
 		// Start REST session

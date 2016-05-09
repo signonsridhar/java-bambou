@@ -73,7 +73,7 @@ public interface RestObjectOperations {
 	void instantiateChild(RestSession<?> session, RestObject childRestObj, RestObject fromTemplate) throws RestException;
 
 	void instantiateChild(RestSession<?> session, RestObject childRestObj, RestObject fromTemplate, Integer responseChoice, boolean commit)
-	        throws RestException;
+			throws RestException;
 
 	void assign(RestSession<?> session, List<? extends RestObject> childRestObjs) throws RestException;
 

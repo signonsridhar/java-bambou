@@ -64,7 +64,7 @@ public class RestClientServiceTest {
 		EasyMock.reset(restOperations);
 		Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
-		        .andReturn(new ResponseEntity<String>(HttpStatus.OK));
+				.andReturn(new ResponseEntity<String>(HttpStatus.OK));
 		EasyMock.replay(restOperations);
 
 		ResponseEntity<String> response = restService.sendRequest(method, url, null, content, String.class);

@@ -59,7 +59,7 @@ public class RestClientService {
 	private RestOperations restOperations;
 
 	public <T, U> ResponseEntity<T> sendRequest(HttpMethod method, String url, HttpHeaders headers, U requestObject, Class<T> responseType)
-	        throws RestException {
+			throws RestException {
 		logger.info(String.format("> %s %s", method, url));
 		logger.info(String.format("> headers: %s", headers));
 		logger.info(String.format("> data:\n  %s", BambouUtils.toString(requestObject)));
@@ -89,7 +89,8 @@ public class RestClientService {
 					// Debug
 					logger.error("Response error: {} {} {}", statusCode, statusCode.getReasonPhrase(), responseBody);
 
-					// Try to retrieve an error message from the response content (in JSON format)
+					// Try to retrieve an error message from the response
+					// content (in JSON format)
 					JsonNode responseObj = objectMapper.readTree(responseBody);
 					ArrayNode errors = (ArrayNode) responseObj.get("errors");
 					if (errors != null) {

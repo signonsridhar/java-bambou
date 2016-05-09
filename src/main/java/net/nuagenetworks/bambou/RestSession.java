@@ -198,7 +198,7 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
 
 	@Override
 	public void instantiateChild(RestObject restObj, RestObject childRestObj, RestObject fromTemplate, Integer responseChoice, boolean commit)
-	        throws RestException {
+			throws RestException {
 		restObj.instantiateChild(this, childRestObj, fromTemplate, responseChoice, commit);
 	}
 
@@ -234,30 +234,30 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
 
 	@Override
 	public <T extends RestObject> List<T> get(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-	        String queryParameters, boolean commit) throws RestException {
+			String queryParameters, boolean commit) throws RestException {
 		return fetcher.get(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 	}
 
 	@Override
 	public <T extends RestObject> List<T> fetch(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-	        String queryParameters, boolean commit) throws RestException {
+			String queryParameters, boolean commit) throws RestException {
 		return fetcher.fetch(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 	}
 
 	@Override
 	public <T extends RestObject> T getFirst(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-	        String queryParameters, boolean commit) throws RestException {
+			String queryParameters, boolean commit) throws RestException {
 		return fetcher.getFirst(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 	}
 
 	@Override
 	public <T extends RestObject> int count(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-	        String queryParameters, boolean commit) throws RestException {
+			String queryParameters, boolean commit) throws RestException {
 		return fetcher.count(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
 	}
 
 	protected <T, U> ResponseEntity<T> sendRequestWithRetry(HttpMethod method, String url, String params, HttpHeaders headers, U requestObj,
-	        Class<T> responseType) throws RestException {
+			Class<T> responseType) throws RestException {
 		if (params != null) {
 			url += (url.indexOf('?') >= 0) ? ";" + params : "?" + params;
 		}
@@ -275,7 +275,8 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
 		} catch (HttpClientErrorException ex) {
 			if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
 				logger.info("HTTP 401/Unauthorized response received");
-				// Re-authenticate the session and try to send the same request again
+				// Re-authenticate the session and try to send the same request
+				// again
 				// a new API key might get issued as a result
 				reset();
 				authenticate();
@@ -329,7 +330,7 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
 	@Override
 	public String toString() {
 		return "RestSession [restClientService=" + restClientService + ", username=" + username + ", password=" + password + ", enterprise=" + enterprise
-		        + ", apiUrl=" + apiUrl + ", apiPrefix=" + apiPrefix + ", version=" + version + ", certificate=" + certificate + ", apiKey=" + apiKey
-		        + ", restRootObjClass=" + restRootObjClass + ", restRootObj=" + restRootObj + "]";
+				+ ", apiUrl=" + apiUrl + ", apiPrefix=" + apiPrefix + ", version=" + version + ", certificate=" + certificate + ", apiKey=" + apiKey
+				+ ", restRootObjClass=" + restRootObjClass + ", restRootObj=" + restRootObj + "]";
 	}
 }

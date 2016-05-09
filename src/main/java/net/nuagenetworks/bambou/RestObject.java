@@ -233,7 +233,7 @@ public class RestObject implements RestObjectOperations {
 	@Override
 	public void fetch(RestSession<?> session) throws RestException {
 		ResponseEntity<RestObject[]> response = session.sendRequestWithRetry(HttpMethod.GET, getResourceUrl(session), null, null, null,
-		        BambouUtils.getArrayClass(this));
+				BambouUtils.getArrayClass(this));
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL && response.getBody().length == 1) {
 			// Success
 			RestObject responseRestObj = response.getBody()[0];
@@ -287,13 +287,13 @@ public class RestObject implements RestObjectOperations {
 	public void createChild(RestSession<?> session, RestObject childRestObj, Integer responseChoice, boolean commit) throws RestException {
 		String params = BambouUtils.getResponseChoiceParam(responseChoice);
 		ResponseEntity<RestObject[]> response = session.sendRequestWithRetry(HttpMethod.POST, getResourceUrlForChildType(session, childRestObj.getClass()),
-		        params, null, childRestObj, BambouUtils.getArrayClass(childRestObj));
+				params, null, childRestObj, BambouUtils.getArrayClass(childRestObj));
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL && response.getBody().length >= 1) {
 			// Success
 			if (response.getBody().length > 1) {
 				logger.warn("HTTP response to POST request constains more than one object. Only processing first object");
 			}
-			
+
 			RestObject responseRestObj = response.getBody()[0];
 			BambouUtils.copyJsonProperties(responseRestObj, childRestObj);
 
@@ -313,7 +313,7 @@ public class RestObject implements RestObjectOperations {
 
 	@Override
 	public void instantiateChild(RestSession<?> session, RestObject childRestObj, RestObject fromTemplate, Integer responseChoice, boolean commit)
-	        throws RestException {
+			throws RestException {
 		if (fromTemplate.getId() == null) {
 			throw new RestException(String.format("Cannot instantiate a child from a template with no ID: %s", fromTemplate));
 		}
@@ -342,7 +342,7 @@ public class RestObject implements RestObjectOperations {
 
 		Class<?> childRestObjClass = childRestObjs.get(0).getClass();
 		ResponseEntity<RestObject[]> response = session.sendRequestWithRetry(HttpMethod.PUT, getResourceUrlForChildType(session, childRestObjClass), null, null,
-		        ids, BambouUtils.getArrayClass(this));
+				ids, BambouUtils.getArrayClass(this));
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL) {
 			// Success
 
@@ -362,13 +362,13 @@ public class RestObject implements RestObjectOperations {
 	public String getRestName() {
 		return getRestName(getClass());
 	}
-	
+
 	@JsonIgnore
 	protected static String getRestName(Class<?> restObjClass) {
 		RestEntity annotation = restObjClass.getAnnotation(RestEntity.class);
-		return annotation.restName();		
+		return annotation.restName();
 	}
-	
+
 	private void addChild(RestObject childRestObj) throws RestException {
 		// Get the object's resource name
 		String restName = getRestName(childRestObj.getClass());
@@ -438,6 +438,6 @@ public class RestObject implements RestObjectOperations {
 	@Override
 	public String toString() {
 		return "RestObject [id=" + id + ", parentId=" + parentId + ", parentType=" + parentType + ", creationDate=" + creationDate + ", lastUpdatedDate="
-		        + lastUpdatedDate + ", owner=" + owner + ", fetcherRegistry=" + fetcherRegistry + "]";
+				+ lastUpdatedDate + ", owner=" + owner + ", fetcherRegistry=" + fetcherRegistry + "]";
 	}
 }
