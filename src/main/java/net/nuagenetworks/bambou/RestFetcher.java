@@ -71,46 +71,86 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 
 	@Override
 	public List<T> get() throws RestException {
-		return RestSession.getCurrentSession().get(this);
+		RestSession<?> session = RestSession.getCurrentSession();
+		if (session != null) {
+			return session.get(this);
+		} else {
+			throw new RestException("Session not available in current thread");
+		}
 	}
 
 	@Override
 	public List<T> fetch() throws RestException {
-		return RestSession.getCurrentSession().fetch(this);
+		RestSession<?> session = RestSession.getCurrentSession();
+		if (session != null) {
+			return session.fetch(this);
+		} else {
+			throw new RestException("Session not available in current thread");
+		}
 	}
 
 	@Override
 	public T getFirst() throws RestException {
-		return RestSession.getCurrentSession().getFirst(this);
+		RestSession<?> session = RestSession.getCurrentSession();
+		if (session != null) {
+			return session.getFirst(this);
+		} else {
+			throw new RestException("Session not available in current thread");
+		}
 	}
 
 	@Override
 	public int count() throws RestException {
-		return RestSession.getCurrentSession().count(this);
+		RestSession<?> session = RestSession.getCurrentSession();
+		if (session != null) {
+			return session.count(this);
+		} else {
+			throw new RestException("Session not available in current thread");
+		}
 	}
 
 	@Override
 	public List<T> get(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
 			throws RestException {
-		return RestSession.getCurrentSession().get(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
+		RestSession<?> session = RestSession.getCurrentSession();
+		if (session != null) {
+			return session.get(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
+		} else {
+			throw new RestException("Session not available in current thread");
+		}
 	}
 
 	@Override
 	public List<T> fetch(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
 			throws RestException {
-		return RestSession.getCurrentSession().fetch(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
+		RestSession<?> session = RestSession.getCurrentSession();
+		if (session != null) {
+			return session.fetch(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
+		} else {
+			throw new RestException("Session not available in current thread");
+		}
 	}
 
 	@Override
 	public T getFirst(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
 			throws RestException {
-		return RestSession.getCurrentSession().getFirst(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
+		RestSession<?> session = RestSession.getCurrentSession();
+		if (session != null) {
+			return session.getFirst(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
+		} else {
+			throw new RestException("Session not available in current thread");
+		}
 	}
 
 	@Override
 	public int count(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
 			throws RestException {
-		return RestSession.getCurrentSession().count(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
+		RestSession<?> session = RestSession.getCurrentSession();
+		if (session != null) {
+			return session.count(this, filter, orderBy, groupBy, page, pageSize, queryParameters, commit);
+		} else {
+			throw new RestException("Session not available in current thread");
+		}
 	}
 
 	@Override

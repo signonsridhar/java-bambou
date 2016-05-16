@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,6 +67,11 @@ public class RestPushCenterTest {
 
 	private ObjectMapper mapper = new ObjectMapper();
 	private int listenerInvocationCount = 0;
+
+	@After
+	public void resetTest() {
+		session.reset();
+	}
 
 	@Test
 	public void testNewPushCenter() {

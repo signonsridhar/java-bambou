@@ -30,6 +30,7 @@ import java.util.Arrays;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,8 +49,6 @@ import org.springframework.web.client.RestOperations;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import net.nuagenetworks.bambou.RestException;
-import net.nuagenetworks.bambou.RestSession;
 import net.nuagenetworks.bambou.spring.TestSpringConfig;
 import net.nuagenetworks.bambou.testobj.TestRootObject;
 
@@ -64,6 +63,16 @@ public class RestSessionTest {
 	private RestSession<TestRootObject> session;
 
 	private ObjectMapper mapper = new ObjectMapper();
+
+	@After
+	public void resetTest() {
+		session.reset();
+	}
+
+	@Test
+	public void testNoSessionAvailable() {
+		Assert.assertNull(RestSession.getCurrentSession());
+	}
 
 	@Test
 	public void testStartSession() throws RestException, RestClientException, JsonProcessingException {

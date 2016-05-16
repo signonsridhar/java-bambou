@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,6 +70,11 @@ public class RestObjectTest {
 	private RestSession<TestRootObject> session;
 
 	private ObjectMapper mapper = new ObjectMapper();
+
+	@After
+	public void resetTest() {
+		session.reset();
+	}
 
 	@Test
 	public void testNewObject() {
@@ -119,6 +125,23 @@ public class RestObjectTest {
 
 		// Verify mock calls
 		EasyMock.verify(restOperations);
+	}
+
+	@Test
+	public void testFetchObjectWithNoSessionAvailable() {
+		String id = "12345";
+
+		RestObject object = new RestObject();
+		object.setId(id);
+
+		try {
+			object.fetch();
+
+			// Fetch should fail with a specific exception message
+			Assert.assertTrue(false);
+		} catch (RestException ex) {
+			Assert.assertEquals("Session not available in current thread", ex.getMessage());
+		}
 	}
 
 	@Test

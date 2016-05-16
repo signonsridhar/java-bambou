@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,6 +69,11 @@ public class RestFetcherTest {
 	private RestSession<TestRootObject> session;
 
 	private ObjectMapper mapper = new ObjectMapper();
+
+	@After
+	public void resetTest() {
+		session.reset();
+	}
 
 	@Test
 	public void testGet() throws RestException, JsonProcessingException {
@@ -155,6 +161,20 @@ public class RestFetcherTest {
 		TestChildObjectFetcher fetcher = new TestChildObjectFetcher(object);
 		List<TestChildObject> childObjects = fetcher.fetch();
 		Assert.assertEquals(3, childObjects.size());
+	}
+
+	@Test
+	public void testFetchWithNoSessionAvailable() {
+		try {
+			TestObject object = new TestObject();
+			TestChildObjectFetcher fetcher = new TestChildObjectFetcher(object);
+			
+			// Fetch should fail with a specific exception message
+			fetcher.fetch();
+			Assert.assertTrue(false);
+		} catch (RestException ex) {
+			Assert.assertEquals("Session not available in current thread", ex.getMessage());
+		}
 	}
 
 	@Test

@@ -30,6 +30,7 @@ import java.util.Arrays;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,6 +65,11 @@ public class RestRootObjectTest {
 	private RestSession<TestRootObject> session;
 
 	private ObjectMapper mapper = new ObjectMapper();
+
+	@After
+	public void resetTest() {
+		session.reset();
+	}
 
 	@Test
 	public void testNewRootObject() throws RestException {
