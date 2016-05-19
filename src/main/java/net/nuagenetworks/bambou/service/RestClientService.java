@@ -37,8 +37,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
@@ -49,6 +47,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import net.nuagenetworks.bambou.RestException;
+import net.nuagenetworks.bambou.RestStatusCodeException;
 import net.nuagenetworks.bambou.util.BambouUtils;
 
 @Service
@@ -66,7 +65,7 @@ public class RestClientService {
 
 		ResponseEntity<T> response = sendRequest(method, url, new HttpEntity<U>(requestObject, headers), responseType);
 
-		logger.info(String.format("< %s %s", method, url));
+		logger.info(String.format("< %s %s [%s]", method, url, response.getStatusCode()));
 		logger.info(String.format("< headers: %s", response.getHeaders()));
 		logger.info(String.format("< data:\n  %s", BambouUtils.toString(response.getBody())));
 
@@ -102,9 +101,9 @@ public class RestClientService {
 						if (property != null) {
 							descriptionText = property.asText() + ": " + descriptionText;
 						}
-						throw new RestException(descriptionText);
+						throw new RestStatusCodeException(statusCode, descriptionText);
 					} else {
-						throw new RestException(statusCode + " " + statusCode.getReasonPhrase());
+						throw new RestStatusCodeException(statusCode, statusCode + " " + statusCode.getReasonPhrase());
 					}
 				} catch (JsonParseException | JsonMappingException ex) {
 					// No error message available in the response
@@ -112,9 +111,9 @@ public class RestClientService {
 					// would normally throw in for these types of errors
 					switch (statusCode.series()) {
 					case CLIENT_ERROR:
-						throw new HttpClientErrorException(statusCode);
+						throw new RestStatusCodeException(statusCode);
 					case SERVER_ERROR:
-						throw new HttpServerErrorException(statusCode);
+						throw new RestStatusCodeException(statusCode);
 					default:
 						throw new RestClientException("Unknown status code [" + statusCode + "]");
 					}

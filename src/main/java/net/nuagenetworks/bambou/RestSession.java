@@ -36,7 +36,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 
 import net.nuagenetworks.bambou.operation.RestSessionOperations;
 import net.nuagenetworks.bambou.service.RestClientService;
@@ -272,19 +271,26 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
 
 		try {
 			return restClientService.sendRequest(method, url, headers, requestObj, responseType);
-		} catch (HttpClientErrorException ex) {
+		} catch (RestStatusCodeException ex) {
 			if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+				// Debug
 				logger.info("HTTP 401/Unauthorized response received");
-				// Re-authenticate the session and try to send the same request
-				// again
-				// a new API key might get issued as a result
-				reset();
-				authenticate();
 
-				// Update authorization header with new API key
-				headers.set(HttpHeaders.AUTHORIZATION, getAuthenticationHeader());
+				// Make sure we are not already re-authenticating
+				// in order to avoid infinite recursion
+				if (!(method == HttpMethod.GET && url.equals(restRootObj.getResourceUrl(this)))) {
+					// Re-authenticate the session and try to send the same
+					// request again a new API key might get issued as a result
+					reset();
+					authenticate();
 
-				return restClientService.sendRequest(method, url, headers, requestObj, responseType);
+					// Update authorization header with new API key
+					headers.set(HttpHeaders.AUTHORIZATION, getAuthenticationHeader());
+
+					return restClientService.sendRequest(method, url, headers, requestObj, responseType);
+				} else {
+					throw ex;
+				}
 			} else {
 				throw ex;
 			}

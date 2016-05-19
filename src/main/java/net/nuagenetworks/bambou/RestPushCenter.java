@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -194,7 +193,7 @@ public class RestPushCenter {
 		try {
 			// Send poll request to server
 			response = session.sendRequestWithRetry(HttpMethod.GET, eventsUrl, params, null, null, Events.class);
-		} catch (HttpClientErrorException ex) {
+		} catch (RestStatusCodeException ex) {
 			// In case of a 400/Bad Request: re-send request without uuid in
 			// order to get a new one
 			if (ex.getStatusCode() == HttpStatus.BAD_REQUEST) {

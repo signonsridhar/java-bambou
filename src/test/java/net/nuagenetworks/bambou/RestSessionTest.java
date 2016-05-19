@@ -80,7 +80,20 @@ public class RestSessionTest {
 		Assert.assertEquals(session, RestSession.getCurrentSession());
 		Assert.assertEquals("12345", session.getRootObject().getApiKey());
 		Assert.assertEquals("TestValue", session.getRootObject().getTestAttr());
-		session.reset();
+	}
+
+	@Test
+	public void testStartSessionWithWrongCredentials() throws RestException, RestClientException, JsonProcessingException {
+		try {
+			// Simulate a login with wrong credentials by sending a 401/Unauthorized response back to the client
+			startSession(HttpStatus.UNAUTHORIZED, "");
+			
+			// We should get an exception
+			Assert.assertTrue(false);
+		} catch(RestStatusCodeException ex) {
+			// Check for expected exception message
+			Assert.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
+		}
 	}
 
 	@Test
@@ -89,6 +102,7 @@ public class RestSessionTest {
 		Assert.assertEquals(session, RestSession.getCurrentSession());
 
 		session.reset();
+		Assert.assertEquals(null, RestSession.getCurrentSession());
 	}
 
 	@Test
@@ -125,6 +139,14 @@ public class RestSessionTest {
 	}
 
 	private RestSession<TestRootObject> startSession() throws RestException, RestClientException, JsonProcessingException {
+		TestRootObject rootObject = new TestRootObject();
+		rootObject.setApiKey("12345");
+		rootObject.setTestAttr("TestValue");
+
+		return startSession(HttpStatus.OK, mapper.writeValueAsString(Arrays.asList(rootObject)));
+	}
+	
+	private RestSession<TestRootObject> startSession(HttpStatus responseStatusCode, String responseContent) throws RestException, RestClientException, JsonProcessingException {
 		String username = "martin";
 		String password = "martin";
 		String enterprise = "martin";
@@ -133,12 +155,9 @@ public class RestSessionTest {
 		double version = 2.1;
 
 		EasyMock.reset(restOperations);
-		TestRootObject rootObject = new TestRootObject();
-		rootObject.setApiKey("12345");
-		rootObject.setTestAttr("TestValue");
 		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
 				EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class)))
-				.andReturn(new ResponseEntity<String>(mapper.writeValueAsString(Arrays.asList(rootObject)), HttpStatus.OK));
+				.andReturn(new ResponseEntity<String>(responseContent, responseStatusCode));
 		EasyMock.replay(restOperations);
 
 		session.setUsername(username);
