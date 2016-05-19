@@ -41,7 +41,7 @@ public class RestStatusCodeException extends RestException {
 	}
 
 	public RestStatusCodeException(HttpStatus statusCode) {
-		super(statusCode.getReasonPhrase());
+		super(statusCode.toString() + '/' + statusCode.getReasonPhrase());
 		
 		this.statusCode = statusCode;
 	}
