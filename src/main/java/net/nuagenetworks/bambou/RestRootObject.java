@@ -34,6 +34,8 @@ import net.nuagenetworks.bambou.annotation.RestEntity;
 
 public class RestRootObject extends RestObject {
 
+	private static final long serialVersionUID = 1L;
+
 	@JsonProperty(value = "userName")
 	protected String userName;
 
@@ -43,7 +45,7 @@ public class RestRootObject extends RestObject {
 	@JsonProperty(value = "APIKey")
 	protected String apiKey;
 
-	private String newPassword;
+	private transient String newPassword;
 
 	public String getUserName() {
 		return userName;

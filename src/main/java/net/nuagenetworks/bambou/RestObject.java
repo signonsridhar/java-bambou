@@ -26,6 +26,7 @@
 */
 package net.nuagenetworks.bambou;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,9 @@ import net.nuagenetworks.bambou.annotation.RestEntity;
 import net.nuagenetworks.bambou.operation.RestObjectOperations;
 import net.nuagenetworks.bambou.util.BambouUtils;
 
-public class RestObject implements RestObjectOperations {
+public class RestObject implements RestObjectOperations, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(RestObject.class);
 
@@ -66,7 +69,7 @@ public class RestObject implements RestObjectOperations {
 	@JsonProperty(value = "owner")
 	protected String owner;
 
-	private Map<String, RestFetcher<? extends RestObject>> fetcherRegistry = new HashMap<String, RestFetcher<? extends RestObject>>();
+	private transient Map<String, RestFetcher<? extends RestObject>> fetcherRegistry = new HashMap<String, RestFetcher<? extends RestObject>>();
 
 	public String getId() {
 		return id;

@@ -33,6 +33,9 @@ import net.nuagenetworks.bambou.annotation.RestEntity;
 
 @RestEntity(restName = "root", resourceName = "root")
 public class TestRootObject extends RestRootObject {
+	
+	private static final long serialVersionUID = 1L;
+
 	@JsonProperty("testAttr")
 	private String testAttr;
 
