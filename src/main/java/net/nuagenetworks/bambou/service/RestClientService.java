@@ -107,8 +107,6 @@ public class RestClientService {
 					}
 				} catch (JsonParseException | JsonMappingException ex) {
 					// No error message available in the response
-					// Throw the same exceptions that the default error handler
-					// would normally throw in for these types of errors
 					switch (statusCode.series()) {
 					case CLIENT_ERROR:
 						throw new RestStatusCodeException(statusCode);
