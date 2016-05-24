@@ -45,5 +45,4 @@ public class X509NaiveTrustManager implements X509TrustManager {
 	public X509Certificate[] getAcceptedIssuers() {
 		return null;
 	}
-
 }

@@ -87,7 +87,6 @@ public class RestRootObject extends RestObject {
 
 		newPassword = null;
 		session.setPassword(null);
-		;
 		session.setApiKey(apiKey);
 	}
 
