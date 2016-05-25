@@ -301,7 +301,7 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
 		return String.format("%s/%s/v%s", apiUrl, apiPrefix, String.valueOf(version).replace('.', '_'));
 	}
 
-	private void authenticate() throws RestException {
+	private synchronized void authenticate() throws RestException {
 		// Create the root object if needed
 		if (restRootObj == null) {
 			restRootObj = createRootObject();

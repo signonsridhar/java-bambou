@@ -28,6 +28,7 @@ package net.nuagenetworks.bambou;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +70,7 @@ public class RestObject implements RestObjectOperations, Serializable {
 	@JsonProperty(value = "owner")
 	protected String owner;
 
-	private transient Map<String, RestFetcher<? extends RestObject>> fetcherRegistry = new HashMap<String, RestFetcher<? extends RestObject>>();
+	private transient Map<String, RestFetcher<? extends RestObject>> fetcherRegistry = Collections.synchronizedMap(new HashMap<String, RestFetcher<? extends RestObject>>());
 
 	public String getId() {
 		return id;
