@@ -183,11 +183,7 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 		if (response.getStatusCode().series() == HttpStatus.Series.SUCCESSFUL) {
 			// Success
 			T[] restObjs = response.getBody();
-			if (restObjs != null) {
-				return merge(restObjs, commit);
-			} else {
-				return new ArrayList<T>();
-			}
+			return merge(restObjs, commit);
 		} else {
 			// Error
 			throw new RestException("Response received with status code: " + response.getStatusCode());
@@ -225,25 +221,27 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
 		List<T> fetchedRestObjs = new ArrayList<T>();
 		List<String> currentIds = new ArrayList<String>();
 
-		for (T restObj : restObjs) {
-			if (restObj == null) {
-				continue;
-			}
-
-			fetchedRestObjs.add(restObj);
-
-			if (!shouldCommit) {
-				continue;
-			}
-
-			currentIds.add(restObj.getId());
-
-			if (contains(restObj)) {
-				int idx = indexOf(restObj);
-				RestObject currentRestObj = get(idx);
-				BambouUtils.copyJsonProperties(restObj, currentRestObj);
-			} else {
-				add(restObj);
+		if (restObjs != null) {
+			for (T restObj : restObjs) {
+				if (restObj == null) {
+					continue;
+				}
+	
+				fetchedRestObjs.add(restObj);
+	
+				if (!shouldCommit) {
+					continue;
+				}
+	
+				currentIds.add(restObj.getId());
+	
+				if (contains(restObj)) {
+					int idx = indexOf(restObj);
+					RestObject currentRestObj = get(idx);
+					BambouUtils.copyJsonProperties(restObj, currentRestObj);
+				} else {
+					add(restObj);
+				}
 			}
 		}
 

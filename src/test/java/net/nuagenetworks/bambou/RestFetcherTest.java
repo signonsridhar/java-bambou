@@ -164,6 +164,67 @@ public class RestFetcherTest {
 	}
 
 	@Test
+	public void testFetchAddedChild() throws JsonProcessingException, RestException {
+		// Create child objects
+		List<RestObject> refChildObjects = new ArrayList<RestObject>();
+		TestChildObject childObject1 = new TestChildObject();
+		childObject1.setId("1");
+		refChildObjects.add(childObject1);
+		TestChildObject childObject2 = new TestChildObject();
+		childObject2.setId("2");
+		refChildObjects.add(childObject2);
+		TestChildObject childObject3 = new TestChildObject();
+		childObject3.setId("3");
+		refChildObjects.add(childObject3);
+
+		// Start session
+		startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK, mapper.writeValueAsString(refChildObjects), null);
+
+		TestObject object = new TestObject();
+		TestChildObjectFetcher fetcher = new TestChildObjectFetcher(object);
+		fetcher.add(childObject1);
+		fetcher.add(childObject2);
+		List<TestChildObject> childObjects = fetcher.fetch();
+		
+		// Make sure the new child appears in both the fetcher and the return list
+		Assert.assertEquals(3, fetcher.size());
+		Assert.assertEquals(3, childObjects.size());
+		Assert.assertEquals(childObject1, fetcher.get(0));
+		Assert.assertEquals(childObject2, fetcher.get(1));
+		Assert.assertEquals(childObject3, fetcher.get(2));
+	}
+	
+	@Test
+	public void testFetchRemovedChild() throws JsonProcessingException, RestException {
+		// Create child objects
+		List<RestObject> refChildObjects = new ArrayList<RestObject>();
+		TestChildObject childObject1 = new TestChildObject();
+		childObject1.setId("1");
+		refChildObjects.add(childObject1);
+		TestChildObject childObject2 = new TestChildObject();
+		childObject2.setId("2");
+		refChildObjects.add(childObject2);
+		TestChildObject childObject3 = new TestChildObject();
+		childObject3.setId("3");
+
+		// Start session
+		startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK, mapper.writeValueAsString(refChildObjects), null);
+
+		TestObject object = new TestObject();
+		TestChildObjectFetcher fetcher = new TestChildObjectFetcher(object);
+		fetcher.add(childObject1);
+		fetcher.add(childObject2);
+		fetcher.add(childObject3);
+		List<TestChildObject> childObjects = fetcher.fetch();
+		
+		// Make sure the child is removed from both the fetcher and the return list
+		Assert.assertEquals(2, fetcher.size());
+		Assert.assertEquals(2, childObjects.size());
+		Assert.assertEquals(childObject1, fetcher.get(0));
+		Assert.assertEquals(childObject2, fetcher.get(1));
+	}
+
+	@Test
 	public void testFetchWithNoSessionAvailable() {
 		try {
 			TestObject object = new TestObject();
@@ -199,9 +260,38 @@ public class RestFetcherTest {
 		TestObject object = new TestObject();
 		TestChildObjectFetcher fetcher = new TestChildObjectFetcher(object);
 		List<TestChildObject> childObjects = fetcher.fetch();
+		
+		// Make sure both the fetcher and return list are empty
+		Assert.assertEquals(0, fetcher.size());
 		Assert.assertEquals(0, childObjects.size());
 	}
 
+	@Test
+	public void testFetchNoContent2() throws JsonProcessingException, RestException {
+		// Create child objects
+		TestChildObject childObject1 = new TestChildObject();
+		childObject1.setId("1");
+		TestChildObject childObject2 = new TestChildObject();
+		childObject2.setId("2");
+		TestChildObject childObject3 = new TestChildObject();
+		childObject3.setId("3");
+		
+		// Start session
+		startSession(restOperations, "object/childobject", HttpMethod.GET, HttpStatus.OK, null, null);
+
+		TestObject object = new TestObject();
+		TestChildObjectFetcher fetcher = new TestChildObjectFetcher(object);
+		fetcher.add(childObject1);
+		fetcher.add(childObject2);
+		fetcher.add(childObject3);
+		List<TestChildObject> childObjects = fetcher.fetch();
+
+		// Make sure all the existing objects in the fetcher get removed and 
+		// that the return list is empty
+		Assert.assertEquals(0, fetcher.size());
+		Assert.assertEquals(0, childObjects.size());
+	}
+	
 	@Test
 	public void testCount() throws JsonProcessingException, RestException {
 		// Create child objects
