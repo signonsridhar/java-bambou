@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface RestEntity {
 
-	String restName();
+    String restName();
 
-	String resourceName();
+    String resourceName();
 }

@@ -52,73 +52,73 @@ import net.nuagenetworks.bambou.util.BambouUtils;
 
 @Service
 public class RestClientService {
-	private static final Logger logger = LoggerFactory.getLogger(RestClientService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestClientService.class);
 
-	@Autowired
-	private RestOperations restOperations;
+    @Autowired
+    private RestOperations restOperations;
 
-	public <T, U> ResponseEntity<T> sendRequest(HttpMethod method, String url, HttpHeaders headers, U requestObject, Class<T> responseType)
-			throws RestException {
-		logger.info(String.format("> %s %s", method, url));
-		logger.info(String.format("> headers: %s", headers));
-		logger.info(String.format("> data:\n  %s", BambouUtils.toString(requestObject)));
+    public <T, U> ResponseEntity<T> sendRequest(HttpMethod method, String url, HttpHeaders headers, U requestObject, Class<T> responseType)
+            throws RestException {
+        logger.info(String.format("> %s %s", method, url));
+        logger.info(String.format("> headers: %s", headers));
+        logger.info(String.format("> data:\n  %s", BambouUtils.toString(requestObject)));
 
-		ResponseEntity<T> response = sendRequest(method, url, new HttpEntity<U>(requestObject, headers), responseType);
+        ResponseEntity<T> response = sendRequest(method, url, new HttpEntity<U>(requestObject, headers), responseType);
 
-		logger.info(String.format("< %s %s [%s]", method, url, response.getStatusCode()));
-		logger.info(String.format("< headers: %s", response.getHeaders()));
-		logger.info(String.format("< data:\n  %s", BambouUtils.toString(response.getBody())));
+        logger.info(String.format("< %s %s [%s]", method, url, response.getStatusCode()));
+        logger.info(String.format("< headers: %s", response.getHeaders()));
+        logger.info(String.format("< data:\n  %s", BambouUtils.toString(response.getBody())));
 
-		return response;
-	}
+        return response;
+    }
 
-	private <T, U> ResponseEntity<T> sendRequest(HttpMethod method, String uri, HttpEntity<U> content, Class<T> responseType) throws RestException {
-		ResponseEntity<String> response = restOperations.exchange(uri, method, content, String.class);
-		String responseBody = response.getBody();
-		HttpStatus statusCode = response.getStatusCode();
-		ObjectMapper objectMapper = new ObjectMapper();
+    private <T, U> ResponseEntity<T> sendRequest(HttpMethod method, String uri, HttpEntity<U> content, Class<T> responseType) throws RestException {
+        ResponseEntity<String> response = restOperations.exchange(uri, method, content, String.class);
+        String responseBody = response.getBody();
+        HttpStatus statusCode = response.getStatusCode();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-		try {
-			HttpStatus.Series series = statusCode.series();
-			if (series != HttpStatus.Series.CLIENT_ERROR && series != HttpStatus.Series.SERVER_ERROR) {
-				T body = (responseBody != null) ? objectMapper.readValue(responseBody, responseType) : null;
-				return new ResponseEntity<T>(body, response.getHeaders(), response.getStatusCode());
-			} else {
-				try {
-					// Debug
-					logger.error("Response error: {} {} {}", statusCode, statusCode.getReasonPhrase(), responseBody);
+        try {
+            HttpStatus.Series series = statusCode.series();
+            if (series != HttpStatus.Series.CLIENT_ERROR && series != HttpStatus.Series.SERVER_ERROR) {
+                T body = (responseBody != null) ? objectMapper.readValue(responseBody, responseType) : null;
+                return new ResponseEntity<T>(body, response.getHeaders(), response.getStatusCode());
+            } else {
+                try {
+                    // Debug
+                    logger.error("Response error: {} {} {}", statusCode, statusCode.getReasonPhrase(), responseBody);
 
-					// Try to retrieve an error message from the response
-					// content (in JSON format)
-					JsonNode responseObj = objectMapper.readTree(responseBody);
-					ArrayNode errors = (ArrayNode) responseObj.get("errors");
-					if (errors != null) {
-						JsonNode error = errors.get(0);
-						ArrayNode descriptions = (ArrayNode) error.get("descriptions");
-						JsonNode description = descriptions.get(0);
-						String descriptionText = description.get("description").asText();
-						JsonNode property = error.get("property");
-						if (property != null) {
-							descriptionText = property.asText() + ": " + descriptionText;
-						}
-						throw new RestStatusCodeException(statusCode, descriptionText);
-					} else {
-						throw new RestStatusCodeException(statusCode, statusCode + " " + statusCode.getReasonPhrase());
-					}
-				} catch (JsonParseException | JsonMappingException ex) {
-					// No error message available in the response
-					switch (statusCode.series()) {
-					case CLIENT_ERROR:
-						throw new RestStatusCodeException(statusCode);
-					case SERVER_ERROR:
-						throw new RestStatusCodeException(statusCode);
-					default:
-						throw new RestClientException("Unknown status code [" + statusCode + "]");
-					}
-				}
-			}
-		} catch (IOException ex) {
-			throw new RestException(ex);
-		}
-	}
+                    // Try to retrieve an error message from the response
+                    // content (in JSON format)
+                    JsonNode responseObj = objectMapper.readTree(responseBody);
+                    ArrayNode errors = (ArrayNode) responseObj.get("errors");
+                    if (errors != null) {
+                        JsonNode error = errors.get(0);
+                        ArrayNode descriptions = (ArrayNode) error.get("descriptions");
+                        JsonNode description = descriptions.get(0);
+                        String descriptionText = description.get("description").asText();
+                        JsonNode property = error.get("property");
+                        if (property != null) {
+                            descriptionText = property.asText() + ": " + descriptionText;
+                        }
+                        throw new RestStatusCodeException(statusCode, descriptionText);
+                    } else {
+                        throw new RestStatusCodeException(statusCode, statusCode + " " + statusCode.getReasonPhrase());
+                    }
+                } catch (JsonParseException | JsonMappingException ex) {
+                    // No error message available in the response
+                    switch (statusCode.series()) {
+                    case CLIENT_ERROR:
+                        throw new RestStatusCodeException(statusCode);
+                    case SERVER_ERROR:
+                        throw new RestStatusCodeException(statusCode);
+                    default:
+                        throw new RestClientException("Unknown status code [" + statusCode + "]");
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            throw new RestException(ex);
+        }
+    }
 }

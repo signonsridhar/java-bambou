@@ -45,60 +45,60 @@ import net.nuagenetworks.bambou.ssl.X509NaiveTrustManager;
 
 public class RestClientTemplate extends RestTemplate {
 
-	private static final int DEFAULT_SOCKET_TIMEOUT_IN_MS = 60 * 1000;
+    private static final int DEFAULT_SOCKET_TIMEOUT_IN_MS = 60 * 1000;
 
-	public RestClientTemplate() {
-		super(new SimpleClientHttpRequestFactory());
+    public RestClientTemplate() {
+        super(new SimpleClientHttpRequestFactory());
 
-		setSocketTimeout(DEFAULT_SOCKET_TIMEOUT_IN_MS);
-		ResponseErrorHandlerImpl responseErrorHandler = new ResponseErrorHandlerImpl();
-		setErrorHandler(responseErrorHandler);
-		disableSslVerification();
-	}
+        setSocketTimeout(DEFAULT_SOCKET_TIMEOUT_IN_MS);
+        ResponseErrorHandlerImpl responseErrorHandler = new ResponseErrorHandlerImpl();
+        setErrorHandler(responseErrorHandler);
+        disableSslVerification();
+    }
 
-	public void setSocketTimeout(int socketTimeout) {
-		if (socketTimeout > 0) {
-			// Debug
-			logger.debug("Using socket timeout for REST connection: " + socketTimeout);
+    public void setSocketTimeout(int socketTimeout) {
+        if (socketTimeout > 0) {
+            // Debug
+            logger.debug("Using socket timeout for REST connection: " + socketTimeout);
 
-			// Set connect and read timeouts
-			SimpleClientHttpRequestFactory requestFactory = (SimpleClientHttpRequestFactory) getRequestFactory();
-			requestFactory.setConnectTimeout(socketTimeout);
-			requestFactory.setReadTimeout(socketTimeout);
-		}
-	}
+            // Set connect and read timeouts
+            SimpleClientHttpRequestFactory requestFactory = (SimpleClientHttpRequestFactory) getRequestFactory();
+            requestFactory.setConnectTimeout(socketTimeout);
+            requestFactory.setReadTimeout(socketTimeout);
+        }
+    }
 
-	public void setHttpProxy(String host, int port) {
-		if (host != null && !host.isEmpty()) {
-			// Debug
-			logger.debug("Using HTTP proxy for REST connection: " + host + ":" + port);
+    public void setHttpProxy(String host, int port) {
+        if (host != null && !host.isEmpty()) {
+            // Debug
+            logger.debug("Using HTTP proxy for REST connection: " + host + ":" + port);
 
-			// Set proxy
-			SimpleClientHttpRequestFactory requestFactory = (SimpleClientHttpRequestFactory) getRequestFactory();
-			Proxy proxy = new Proxy(Type.HTTP, new InetSocketAddress(host, port));
-			requestFactory.setProxy(proxy);
-		}
-	}
+            // Set proxy
+            SimpleClientHttpRequestFactory requestFactory = (SimpleClientHttpRequestFactory) getRequestFactory();
+            Proxy proxy = new Proxy(Type.HTTP, new InetSocketAddress(host, port));
+            requestFactory.setProxy(proxy);
+        }
+    }
 
-	private void disableSslVerification() {
-		try {
-			// Create a trust manager that doesn't validate cert chains
-			TrustManager[] trustAllCerts = new TrustManager[] { new X509NaiveTrustManager() };
+    private void disableSslVerification() {
+        try {
+            // Create a trust manager that doesn't validate cert chains
+            TrustManager[] trustAllCerts = new TrustManager[] { new X509NaiveTrustManager() };
 
-			// Install the new trust manager
-			SSLContext sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            // Install the new trust manager
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-			// Create host verifier
-			HostnameVerifier allHostsValid = new NaiveHostnameVerifier();
+            // Create host verifier
+            HostnameVerifier allHostsValid = new NaiveHostnameVerifier();
 
-			// Install the host verifier
-			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-		} catch (NoSuchAlgorithmException ex) {
-			ex.printStackTrace();
-		} catch (KeyManagementException ex) {
-			ex.printStackTrace();
-		}
-	}
+            // Install the host verifier
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+        } catch (NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
+        } catch (KeyManagementException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

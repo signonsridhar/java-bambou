@@ -58,100 +58,100 @@ import net.nuagenetworks.bambou.testobj.TestRootObject;
 @ContextConfiguration(classes = TestSpringConfig.class, loader = AnnotationConfigContextLoader.class)
 public class RestRootObjectTest {
 
-	@Autowired
-	private RestOperations restOperations;
+    @Autowired
+    private RestOperations restOperations;
 
-	@Autowired
-	private RestSession<TestRootObject> session;
+    @Autowired
+    private RestSession<TestRootObject> session;
 
-	private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
-	@After
-	public void resetTest() {
-		session.reset();
-	}
+    @After
+    public void resetTest() {
+        session.reset();
+    }
 
-	@Test
-	public void testNewRootObject() throws RestException {
-		String username = "martin";
-		String password = "martin";
-		String apiKey = "12345";
+    @Test
+    public void testNewRootObject() throws RestException {
+        String username = "martin";
+        String password = "martin";
+        String apiKey = "12345";
 
-		RestRootObject rootObject = new TestRootObject();
-		rootObject.setUserName(username);
-		rootObject.setPassword(password);
-		rootObject.setApiKey(apiKey);
+        RestRootObject rootObject = new TestRootObject();
+        rootObject.setUserName(username);
+        rootObject.setPassword(password);
+        rootObject.setApiKey(apiKey);
 
-		Assert.assertEquals(apiKey, rootObject.getApiKey());
-		Assert.assertEquals(username, rootObject.getUserName());
-		Assert.assertEquals(password, rootObject.getPassword());
-	}
+        Assert.assertEquals(apiKey, rootObject.getApiKey());
+        Assert.assertEquals(username, rootObject.getUserName());
+        Assert.assertEquals(password, rootObject.getPassword());
+    }
 
-	@Test
-	public void testFetchObject() throws RestException, RestClientException, JsonProcessingException {
-		String id = "12345";
+    @Test
+    public void testFetchObject() throws RestException, RestClientException, JsonProcessingException {
+        String id = "12345";
 
-		// Create response object to fetch REST call
-		TestRootObject refRootObject = new TestRootObject();
-		refRootObject.setId(id);
-		refRootObject.setApiKey("12345");
+        // Create response object to fetch REST call
+        TestRootObject refRootObject = new TestRootObject();
+        refRootObject.setId(id);
+        refRootObject.setApiKey("12345");
 
-		// Start session
-		startSession(restOperations, "root", HttpMethod.GET, HttpStatus.OK, mapper.writeValueAsString(Arrays.asList(refRootObject)));
+        // Start session
+        startSession(restOperations, "root", HttpMethod.GET, HttpStatus.OK, mapper.writeValueAsString(Arrays.asList(refRootObject)));
 
-		// Fetch root object
-		RestRootObject rootObject = new TestRootObject();
-		rootObject.fetch();
+        // Fetch root object
+        RestRootObject rootObject = new TestRootObject();
+        rootObject.fetch();
 
-		// Expect some object properties to be set
-		Assert.assertEquals(id, rootObject.getId());
-		Assert.assertEquals(refRootObject.getApiKey(), rootObject.getApiKey());
+        // Expect some object properties to be set
+        Assert.assertEquals(id, rootObject.getId());
+        Assert.assertEquals(refRootObject.getApiKey(), rootObject.getApiKey());
 
-		// Verify mock calls
-		EasyMock.verify(restOperations);
-	}
+        // Verify mock calls
+        EasyMock.verify(restOperations);
+    }
 
-	@Test
-	public void testSaveObject() throws RestException, RestClientException, JsonProcessingException {
-		// Start session
-		startSession(restOperations, "root", HttpMethod.PUT, HttpStatus.NO_CONTENT, "[]");
+    @Test
+    public void testSaveObject() throws RestException, RestClientException, JsonProcessingException {
+        // Start session
+        startSession(restOperations, "root", HttpMethod.PUT, HttpStatus.NO_CONTENT, "[]");
 
-		// Save root object
-		RestRootObject rootObject = new TestRootObject();
-		rootObject.save();
+        // Save root object
+        RestRootObject rootObject = new TestRootObject();
+        rootObject.save();
 
-		// Verify mock calls
-		EasyMock.verify(restOperations);
-	}
+        // Verify mock calls
+        EasyMock.verify(restOperations);
+    }
 
-	private RestSession<TestRootObject> startSession(RestOperations restOperations, String urlSuffix, HttpMethod method, HttpStatus responseStatus,
-			String responseString) throws RestException {
-		String username = "martin";
-		String password = "martin";
-		String enterprise = "martin";
-		String apiUrl = "http://vsd";
-		String apiPrefix = "api";
-		double version = 2.1;
+    private RestSession<TestRootObject> startSession(RestOperations restOperations, String urlSuffix, HttpMethod method, HttpStatus responseStatus,
+            String responseString) throws RestException {
+        String username = "martin";
+        String password = "martin";
+        String enterprise = "martin";
+        String apiUrl = "http://vsd";
+        String apiPrefix = "api";
+        double version = 2.1;
 
-		Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
+        Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
 
-		// Expected REST calls
-		EasyMock.reset(restOperations);
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
-				EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("[{}]", HttpStatus.OK));
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/" + urlSuffix), EasyMock.eq(method),
-				EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(responseString, responseStatus));
-		EasyMock.replay(restOperations);
+        // Expected REST calls
+        EasyMock.reset(restOperations);
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
+                EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("[{}]", HttpStatus.OK));
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/" + urlSuffix), EasyMock.eq(method),
+                EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(responseString, responseStatus));
+        EasyMock.replay(restOperations);
 
-		// Start REST session
-		session.setUsername(username);
-		session.setPassword(password);
-		session.setEnterprise(enterprise);
-		session.setApiUrl(apiUrl);
-		session.setApiPrefix(apiPrefix);
-		session.setVersion(version);
-		session.start();
+        // Start REST session
+        session.setUsername(username);
+        session.setPassword(password);
+        session.setEnterprise(enterprise);
+        session.setApiUrl(apiUrl);
+        session.setApiPrefix(apiPrefix);
+        session.setVersion(version);
+        session.start();
 
-		return session;
-	}
+        return session;
+    }
 }

@@ -34,49 +34,49 @@ import net.nuagenetworks.bambou.RestObject;
 
 public interface RestSessionOperations {
 
-	void start() throws RestException;
+    void start() throws RestException;
 
-	void reset() throws RestException;
+    void reset() throws RestException;
 
-	void fetch(RestObject restObj) throws RestException;
+    void fetch(RestObject restObj) throws RestException;
 
-	void save(RestObject restObj) throws RestException;
+    void save(RestObject restObj) throws RestException;
 
-	void save(RestObject restObj, Integer responseChoice) throws RestException;
+    void save(RestObject restObj, Integer responseChoice) throws RestException;
 
-	void delete(RestObject restObj) throws RestException;
+    void delete(RestObject restObj) throws RestException;
 
-	void delete(RestObject restObj, Integer responseChoice) throws RestException;
+    void delete(RestObject restObj, Integer responseChoice) throws RestException;
 
-	void createChild(RestObject restObj, RestObject childRestObj) throws RestException;
+    void createChild(RestObject restObj, RestObject childRestObj) throws RestException;
 
-	void createChild(RestObject restObj, RestObject childRestObj, Integer responseChoice, boolean commit) throws RestException;
+    void createChild(RestObject restObj, RestObject childRestObj, Integer responseChoice, boolean commit) throws RestException;
 
-	void instantiateChild(RestObject restObj, RestObject childRestObj, RestObject fromTemplate) throws RestException;
+    void instantiateChild(RestObject restObj, RestObject childRestObj, RestObject fromTemplate) throws RestException;
 
-	void instantiateChild(RestObject restObj, RestObject childRestObj, RestObject fromTemplate, Integer responseChoice, boolean commit) throws RestException;
+    void instantiateChild(RestObject restObj, RestObject childRestObj, RestObject fromTemplate, Integer responseChoice, boolean commit) throws RestException;
 
-	void assign(RestObject restObj, List<? extends RestObject> childRestObjs) throws RestException;
+    void assign(RestObject restObj, List<? extends RestObject> childRestObjs) throws RestException;
 
-	void assign(RestObject restObj, List<? extends RestObject> childRestObjs, boolean commit) throws RestException;
+    void assign(RestObject restObj, List<? extends RestObject> childRestObjs, boolean commit) throws RestException;
 
-	<T extends RestObject> List<T> get(RestFetcher<T> fetcher) throws RestException;
+    <T extends RestObject> List<T> get(RestFetcher<T> fetcher) throws RestException;
 
-	<T extends RestObject> List<T> fetch(RestFetcher<T> fetcher) throws RestException;
+    <T extends RestObject> List<T> fetch(RestFetcher<T> fetcher) throws RestException;
 
-	<T extends RestObject> T getFirst(RestFetcher<T> fetcher) throws RestException;
+    <T extends RestObject> T getFirst(RestFetcher<T> fetcher) throws RestException;
 
-	<T extends RestObject> int count(RestFetcher<T> fetcher) throws RestException;
+    <T extends RestObject> int count(RestFetcher<T> fetcher) throws RestException;
 
-	<T extends RestObject> List<T> get(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-			String queryParameters, boolean commit) throws RestException;
+    <T extends RestObject> List<T> get(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
+            String queryParameters, boolean commit) throws RestException;
 
-	<T extends RestObject> List<T> fetch(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-			String queryParameters, boolean commit) throws RestException;
+    <T extends RestObject> List<T> fetch(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
+            String queryParameters, boolean commit) throws RestException;
 
-	<T extends RestObject> T getFirst(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-			String queryParameters, boolean commit) throws RestException;
+    <T extends RestObject> T getFirst(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
+            String queryParameters, boolean commit) throws RestException;
 
-	<T extends RestObject> int count(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
-			String queryParameters, boolean commit) throws RestException;
+    <T extends RestObject> int count(RestFetcher<T> fetcher, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize,
+            String queryParameters, boolean commit) throws RestException;
 }

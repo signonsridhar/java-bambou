@@ -34,83 +34,83 @@ import net.nuagenetworks.bambou.annotation.RestEntity;
 
 public class RestRootObject extends RestObject {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@JsonProperty(value = "userName")
-	protected String userName;
+    @JsonProperty(value = "userName")
+    protected String userName;
 
-	@JsonProperty(value = "password")
-	protected String password;
+    @JsonProperty(value = "password")
+    protected String password;
 
-	@JsonProperty(value = "APIKey")
-	protected String apiKey;
+    @JsonProperty(value = "APIKey")
+    protected String apiKey;
 
-	private transient String newPassword;
+    private transient String newPassword;
 
-	public String getUserName() {
-		return userName;
-	}
+    public String getUserName() {
+        return userName;
+    }
 
-	public void setUserName(String username) {
-		this.userName = username;
-	}
+    public void setUserName(String username) {
+        this.userName = username;
+    }
 
-	public String getApiKey() {
-		return apiKey;
-	}
+    public String getApiKey() {
+        return apiKey;
+    }
 
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
-	}
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void prepareChangePassword(String newPassword) {
-		this.newPassword = newPassword;
-	}
+    public void prepareChangePassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 
-	public void save(RestSession<?> session) throws RestException {
-		if (newPassword != null) {
-			password = DigestUtils.sha1Hex(newPassword);
-		}
+    public void save(RestSession<?> session) throws RestException {
+        if (newPassword != null) {
+            password = DigestUtils.sha1Hex(newPassword);
+        }
 
-		session.setPassword(newPassword);
-		session.setApiKey(null);
+        session.setPassword(newPassword);
+        session.setApiKey(null);
 
-		super.save(session);
+        super.save(session);
 
-		newPassword = null;
-		session.setPassword(null);
-		session.setApiKey(apiKey);
-	}
+        newPassword = null;
+        session.setPassword(null);
+        session.setApiKey(apiKey);
+    }
 
-	protected String getResourceUrl(RestSession<?> session) {
-		// Get the object's resource name
-		RestEntity annotation = getClass().getAnnotation(RestEntity.class);
-		String resourceName = annotation.resourceName();
+    protected String getResourceUrl(RestSession<?> session) {
+        // Get the object's resource name
+        RestEntity annotation = getClass().getAnnotation(RestEntity.class);
+        String resourceName = annotation.resourceName();
 
-		// Build the base URL
-		String url = session.getRestBaseUrl();
+        // Build the base URL
+        String url = session.getRestBaseUrl();
 
-		return String.format("%s/%s", url, resourceName);
-	}
+        return String.format("%s/%s", url, resourceName);
+    }
 
-	protected String getResourceUrlForChildType(RestSession<?> session, Class<?> childRestObjClass) {
-		// Get the child object's resource name
-		RestEntity annotation = childRestObjClass.getAnnotation(RestEntity.class);
-		String resourceName = annotation.resourceName();
+    protected String getResourceUrlForChildType(RestSession<?> session, Class<?> childRestObjClass) {
+        // Get the child object's resource name
+        RestEntity annotation = childRestObjClass.getAnnotation(RestEntity.class);
+        String resourceName = annotation.resourceName();
 
-		return String.format("%s/%s", session.getRestBaseUrl(), resourceName);
-	}
+        return String.format("%s/%s", session.getRestBaseUrl(), resourceName);
+    }
 
-	@Override
-	public String toString() {
-		return "RestRootObject [userName=" + userName + ", password=" + password + ", apiKey=" + apiKey + ", newPassword=" + newPassword + "]";
-	}
+    @Override
+    public String toString() {
+        return "RestRootObject [userName=" + userName + ", password=" + password + ", apiKey=" + apiKey + ", newPassword=" + newPassword + "]";
+    }
 }

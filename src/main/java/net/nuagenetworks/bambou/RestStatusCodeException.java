@@ -30,27 +30,27 @@ import org.springframework.http.HttpStatus;
 
 public class RestStatusCodeException extends RestException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private HttpStatus statusCode;
+    private HttpStatus statusCode;
 
-	public RestStatusCodeException(HttpStatus statusCode, String message) {
-		super(message);
-		
-		this.statusCode = statusCode;
-	}
+    public RestStatusCodeException(HttpStatus statusCode, String message) {
+        super(message);
 
-	public RestStatusCodeException(HttpStatus statusCode) {
-		super(statusCode.toString() + '/' + statusCode.getReasonPhrase());
-		
-		this.statusCode = statusCode;
-	}
+        this.statusCode = statusCode;
+    }
 
-	public RestStatusCodeException(Exception cause) {
-		super(cause);
-	}
-	
-	public HttpStatus getStatusCode() {
-		return statusCode;
-	}
+    public RestStatusCodeException(HttpStatus statusCode) {
+        super(statusCode.toString() + '/' + statusCode.getReasonPhrase());
+
+        this.statusCode = statusCode;
+    }
+
+    public RestStatusCodeException(Exception cause) {
+        super(cause);
+    }
+
+    public HttpStatus getStatusCode() {
+        return statusCode;
+    }
 }

@@ -31,6 +31,6 @@ import net.nuagenetworks.bambou.annotation.RestEntity;
 
 @RestEntity(restName = "templateobject", resourceName = "templateobject")
 public class TestChildTemplateObject extends RestObject {
-	
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
 }

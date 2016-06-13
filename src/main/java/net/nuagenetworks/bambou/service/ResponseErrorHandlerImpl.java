@@ -33,12 +33,12 @@ import org.springframework.web.client.ResponseErrorHandler;
 
 public class ResponseErrorHandlerImpl implements ResponseErrorHandler {
 
-	@Override
-	public void handleError(ClientHttpResponse response) throws IOException {
-	}
+    @Override
+    public void handleError(ClientHttpResponse response) throws IOException {
+    }
 
-	@Override
-	public boolean hasError(ClientHttpResponse response) throws IOException {
-		return false;
-	}
+    @Override
+    public boolean hasError(ClientHttpResponse response) throws IOException {
+        return false;
+    }
 }

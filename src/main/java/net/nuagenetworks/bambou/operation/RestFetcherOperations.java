@@ -34,39 +34,39 @@ import net.nuagenetworks.bambou.RestSession;
 
 public interface RestFetcherOperations<T extends RestObject> {
 
-	List<T> get() throws RestException;
+    List<T> get() throws RestException;
 
-	List<T> fetch() throws RestException;
+    List<T> fetch() throws RestException;
 
-	T getFirst() throws RestException;
+    T getFirst() throws RestException;
 
-	int count() throws RestException;
+    int count() throws RestException;
 
-	List<T> get(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit) throws RestException;
+    List<T> get(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit) throws RestException;
 
-	List<T> fetch(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit) throws RestException;
+    List<T> fetch(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit) throws RestException;
 
-	T getFirst(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit) throws RestException;
+    T getFirst(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit) throws RestException;
 
-	int count(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit) throws RestException;
+    int count(String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit) throws RestException;
 
-	List<T> get(RestSession<?> session) throws RestException;
+    List<T> get(RestSession<?> session) throws RestException;
 
-	List<T> fetch(RestSession<?> session) throws RestException;
+    List<T> fetch(RestSession<?> session) throws RestException;
 
-	T getFirst(RestSession<?> session) throws RestException;
+    T getFirst(RestSession<?> session) throws RestException;
 
-	int count(RestSession<?> session) throws RestException;
+    int count(RestSession<?> session) throws RestException;
 
-	List<T> get(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
-			throws RestException;
+    List<T> get(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
+            throws RestException;
 
-	List<T> fetch(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters,
-			boolean commit) throws RestException;
+    List<T> fetch(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters,
+            boolean commit) throws RestException;
 
-	T getFirst(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
-			throws RestException;
+    T getFirst(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
+            throws RestException;
 
-	int count(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
-			throws RestException;
+    int count(RestSession<?> session, String filter, String orderBy, String[] groupBy, Integer page, Integer pageSize, String queryParameters, boolean commit)
+            throws RestException;
 }

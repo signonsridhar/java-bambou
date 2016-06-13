@@ -30,9 +30,9 @@ import net.nuagenetworks.bambou.RestFetcher;
 import net.nuagenetworks.bambou.RestObject;
 
 public class TestChildObjectFetcher extends RestFetcher<TestChildObject> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public TestChildObjectFetcher(RestObject parentObject) {
-		super(parentObject, TestChildObject.class);
-	}
+    public TestChildObjectFetcher(RestObject parentObject) {
+        super(parentObject, TestChildObject.class);
+    }
 }

@@ -34,48 +34,48 @@ import net.nuagenetworks.bambou.RestSession;
 
 public interface RestObjectOperations {
 
-	void fetch() throws RestException;
+    void fetch() throws RestException;
 
-	void save() throws RestException;
+    void save() throws RestException;
 
-	void save(Integer responseChoice) throws RestException;
+    void save(Integer responseChoice) throws RestException;
 
-	void delete() throws RestException;
+    void delete() throws RestException;
 
-	void delete(Integer responseChoice) throws RestException;
+    void delete(Integer responseChoice) throws RestException;
 
-	void createChild(RestObject childRestObj) throws RestException;
+    void createChild(RestObject childRestObj) throws RestException;
 
-	void createChild(RestObject childRestObj, Integer responseChoice, boolean commit) throws RestException;
+    void createChild(RestObject childRestObj, Integer responseChoice, boolean commit) throws RestException;
 
-	void instantiateChild(RestObject childRestObj, RestObject fromTemplate) throws RestException;
+    void instantiateChild(RestObject childRestObj, RestObject fromTemplate) throws RestException;
 
-	void instantiateChild(RestObject childRestObj, RestObject fromTemplate, Integer responseChoice, boolean commit) throws RestException;
+    void instantiateChild(RestObject childRestObj, RestObject fromTemplate, Integer responseChoice, boolean commit) throws RestException;
 
-	void assign(List<? extends RestObject> childRestObjs) throws RestException;
+    void assign(List<? extends RestObject> childRestObjs) throws RestException;
 
-	void assign(List<? extends RestObject> childRestObjs, boolean commit) throws RestException;
+    void assign(List<? extends RestObject> childRestObjs, boolean commit) throws RestException;
 
-	void fetch(RestSession<?> session) throws RestException;
+    void fetch(RestSession<?> session) throws RestException;
 
-	void save(RestSession<?> session) throws RestException;
+    void save(RestSession<?> session) throws RestException;
 
-	void save(RestSession<?> session, Integer responseChoice) throws RestException;
+    void save(RestSession<?> session, Integer responseChoice) throws RestException;
 
-	void delete(RestSession<?> session) throws RestException;
+    void delete(RestSession<?> session) throws RestException;
 
-	void delete(RestSession<?> session, Integer responseChoice) throws RestException;
+    void delete(RestSession<?> session, Integer responseChoice) throws RestException;
 
-	void createChild(RestSession<?> session, RestObject childRestObj) throws RestException;
+    void createChild(RestSession<?> session, RestObject childRestObj) throws RestException;
 
-	void createChild(RestSession<?> session, RestObject childRestObj, Integer responseChoice, boolean commit) throws RestException;
+    void createChild(RestSession<?> session, RestObject childRestObj, Integer responseChoice, boolean commit) throws RestException;
 
-	void instantiateChild(RestSession<?> session, RestObject childRestObj, RestObject fromTemplate) throws RestException;
+    void instantiateChild(RestSession<?> session, RestObject childRestObj, RestObject fromTemplate) throws RestException;
 
-	void instantiateChild(RestSession<?> session, RestObject childRestObj, RestObject fromTemplate, Integer responseChoice, boolean commit)
-			throws RestException;
+    void instantiateChild(RestSession<?> session, RestObject childRestObj, RestObject fromTemplate, Integer responseChoice, boolean commit)
+            throws RestException;
 
-	void assign(RestSession<?> session, List<? extends RestObject> childRestObjs) throws RestException;
+    void assign(RestSession<?> session, List<? extends RestObject> childRestObjs) throws RestException;
 
-	void assign(RestSession<?> session, List<? extends RestObject> childRestObjs, boolean commit) throws RestException;
+    void assign(RestSession<?> session, List<? extends RestObject> childRestObjs, boolean commit) throws RestException;
 }

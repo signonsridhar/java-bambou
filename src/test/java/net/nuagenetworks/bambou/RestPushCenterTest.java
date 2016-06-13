@@ -59,119 +59,119 @@ import net.nuagenetworks.bambou.testobj.TestRootObject;
 @ContextConfiguration(classes = TestSpringConfig.class, loader = AnnotationConfigContextLoader.class)
 public class RestPushCenterTest {
 
-	@Autowired
-	private RestOperations restOperations;
+    @Autowired
+    private RestOperations restOperations;
 
-	@Autowired
-	private RestSession<TestRootObject> session;
+    @Autowired
+    private RestSession<TestRootObject> session;
 
-	private ObjectMapper mapper = new ObjectMapper();
-	private int listenerInvocationCount = 0;
+    private ObjectMapper mapper = new ObjectMapper();
+    private int listenerInvocationCount = 0;
 
-	@After
-	public void resetTest() {
-		session.reset();
-	}
+    @After
+    public void resetTest() {
+        session.reset();
+    }
 
-	@Test
-	public void testNewPushCenter() {
-		String url = "http://vsd";
+    @Test
+    public void testNewPushCenter() {
+        String url = "http://vsd";
 
-		RestPushCenter pushCenter = new RestPushCenter(session);
-		pushCenter.setUrl(url);
-		Assert.assertEquals(url, pushCenter.getUrl());
-		Assert.assertFalse(pushCenter.isRunning());
-	}
+        RestPushCenter pushCenter = new RestPushCenter(session);
+        pushCenter.setUrl(url);
+        Assert.assertEquals(url, pushCenter.getUrl());
+        Assert.assertFalse(pushCenter.isRunning());
+    }
 
-	@Test
-	public void testStartPushCenter() throws InterruptedException {
-		String url = "http://vsd";
+    @Test
+    public void testStartPushCenter() throws InterruptedException {
+        String url = "http://vsd";
 
-		EasyMock.reset(restOperations);
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
-				EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("{}", HttpStatus.OK)).atLeastOnce();
-		EasyMock.replay(restOperations);
+        EasyMock.reset(restOperations);
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
+                EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("{}", HttpStatus.OK)).atLeastOnce();
+        EasyMock.replay(restOperations);
 
-		RestPushCenter pushCenter = new RestPushCenter(session);
-		pushCenter.setUrl(url);
-		pushCenter.start();
+        RestPushCenter pushCenter = new RestPushCenter(session);
+        pushCenter.setUrl(url);
+        pushCenter.start();
 
-		Thread.sleep(500);
-		Assert.assertTrue(pushCenter.isRunning());
-		pushCenter.stop();
-		Assert.assertFalse(pushCenter.isRunning());
+        Thread.sleep(500);
+        Assert.assertTrue(pushCenter.isRunning());
+        pushCenter.stop();
+        Assert.assertFalse(pushCenter.isRunning());
 
-		EasyMock.verify(restOperations);
-	}
+        EasyMock.verify(restOperations);
+    }
 
-	@Test
-	public void testPushCenterListener() throws InterruptedException, JsonProcessingException, IOException {
-		String url = "http://vsd";
+    @Test
+    public void testPushCenterListener() throws InterruptedException, JsonProcessingException, IOException {
+        String url = "http://vsd";
 
-		Events events = new Events();
-		JsonNode event = mapper.readTree("{\"k1\":\"v1\"}");
-		events.setEvents(Arrays.asList(event));
+        Events events = new Events();
+        JsonNode event = mapper.readTree("{\"k1\":\"v1\"}");
+        events.setEvents(Arrays.asList(event));
 
-		EasyMock.reset(restOperations);
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
-				EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(mapper.writeValueAsString(events), HttpStatus.OK)).atLeastOnce();
-		EasyMock.replay(restOperations);
+        EasyMock.reset(restOperations);
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
+                EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(mapper.writeValueAsString(events), HttpStatus.OK)).atLeastOnce();
+        EasyMock.replay(restOperations);
 
-		listenerInvocationCount = 0;
-		RestPushCenterListener listener = new RestPushCenterListener() {
-			@Override
-			public void onEvent(JsonNode event) {
-				listenerInvocationCount++;
-			}
-		};
-		RestPushCenter pushCenter = new RestPushCenter(session);
-		pushCenter.setUrl(url);
-		pushCenter.addListener(listener);
-		pushCenter.start();
+        listenerInvocationCount = 0;
+        RestPushCenterListener listener = new RestPushCenterListener() {
+            @Override
+            public void onEvent(JsonNode event) {
+                listenerInvocationCount++;
+            }
+        };
+        RestPushCenter pushCenter = new RestPushCenter(session);
+        pushCenter.setUrl(url);
+        pushCenter.addListener(listener);
+        pushCenter.start();
 
-		Thread.sleep(500);
-		Assert.assertTrue(pushCenter.isRunning());
-		Assert.assertTrue(listenerInvocationCount > 0);
+        Thread.sleep(500);
+        Assert.assertTrue(pushCenter.isRunning());
+        Assert.assertTrue(listenerInvocationCount > 0);
 
-		pushCenter.stop();
-		pushCenter.removeListener(listener);
+        pushCenter.stop();
+        pushCenter.removeListener(listener);
 
-		Assert.assertFalse(pushCenter.isRunning());
+        Assert.assertFalse(pushCenter.isRunning());
 
-		EasyMock.verify(restOperations);
-	}
+        EasyMock.verify(restOperations);
+    }
 
-	@Test
-	public void testPushCenterWith400Response() throws InterruptedException, JsonProcessingException, IOException {
-		String url = "http://vsd";
+    @Test
+    public void testPushCenterWith400Response() throws InterruptedException, JsonProcessingException, IOException {
+        String url = "http://vsd";
 
-		Events events = new Events();
-		JsonNode event = mapper.readTree("{\"k1\":\"v1\"}");
-		events.setEvents(Arrays.asList(event));
-		events.setUuid("1");
+        Events events = new Events();
+        JsonNode event = mapper.readTree("{\"k1\":\"v1\"}");
+        events.setEvents(Arrays.asList(event));
+        events.setUuid("1");
 
-		EasyMock.reset(restOperations);
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
-				EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(mapper.writeValueAsString(events), HttpStatus.OK));
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events?uuid=1"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
-				EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(mapper.writeValueAsString(events), HttpStatus.OK));
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events?uuid=1"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
-				EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("", HttpStatus.BAD_REQUEST));
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
-				EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(mapper.writeValueAsString(events), HttpStatus.OK));
-		EasyMock.replay(restOperations);
+        EasyMock.reset(restOperations);
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
+                EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(mapper.writeValueAsString(events), HttpStatus.OK));
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events?uuid=1"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
+                EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(mapper.writeValueAsString(events), HttpStatus.OK));
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events?uuid=1"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
+                EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>("", HttpStatus.BAD_REQUEST));
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url + "/events"), EasyMock.eq(HttpMethod.GET), EasyMock.anyObject(HttpEntity.class),
+                EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(mapper.writeValueAsString(events), HttpStatus.OK));
+        EasyMock.replay(restOperations);
 
-		RestPushCenter pushCenter = new RestPushCenter(session);
-		pushCenter.setUrl(url);
-		pushCenter.start();
+        RestPushCenter pushCenter = new RestPushCenter(session);
+        pushCenter.setUrl(url);
+        pushCenter.start();
 
-		Thread.sleep(500);
-		Assert.assertTrue(pushCenter.isRunning());
+        Thread.sleep(500);
+        Assert.assertTrue(pushCenter.isRunning());
 
-		pushCenter.stop();
+        pushCenter.stop();
 
-		Assert.assertFalse(pushCenter.isRunning());
+        Assert.assertFalse(pushCenter.isRunning());
 
-		EasyMock.verify(restOperations);
-	}
+        EasyMock.verify(restOperations);
+    }
 }

@@ -44,107 +44,107 @@ import net.nuagenetworks.bambou.RestObject;
 
 public class BambouUtils {
 
-	private static final String RESPONSE_CHOICE_PARAM = "responseChoice";
+    private static final String RESPONSE_CHOICE_PARAM = "responseChoice";
 
-	public static String toString(Object content) throws RestException {
-		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			return objectMapper.writeValueAsString(content);
-		} catch (JsonProcessingException ex) {
-			throw new RestException(ex);
-		}
-	}
+    public static String toString(Object content) throws RestException {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(content);
+        } catch (JsonProcessingException ex) {
+            throw new RestException(ex);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public static <T> Class<T[]> getArrayClass(T restObj) throws RestException {
-		Class<T> restObjClass = (Class<T>) restObj.getClass();
-		return getArrayClass(restObjClass);
-	}
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T[]> getArrayClass(T restObj) throws RestException {
+        Class<T> restObjClass = (Class<T>) restObj.getClass();
+        return getArrayClass(restObjClass);
+    }
 
-	@SuppressWarnings("unchecked")
-	public static <T> Class<T[]> getArrayClass(Class<T> restObjClass) throws RestException {
-		try {
-			return (Class<T[]>) Class.forName("[L" + restObjClass.getName() + ";");
-		} catch (ClassNotFoundException ex) {
-			throw new RestException(ex);
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T[]> getArrayClass(Class<T> restObjClass) throws RestException {
+        try {
+            return (Class<T[]>) Class.forName("[L" + restObjClass.getName() + ";");
+        } catch (ClassNotFoundException ex) {
+            throw new RestException(ex);
+        }
+    }
 
-	public static void copyJsonProperties(RestObject fromRestObj, RestObject toRestObj) throws RestException {
-		if (fromRestObj.getClass() != toRestObj.getClass()) {
-			return;
-		}
+    public static void copyJsonProperties(RestObject fromRestObj, RestObject toRestObj) throws RestException {
+        if (fromRestObj.getClass() != toRestObj.getClass()) {
+            return;
+        }
 
-		List<Field> fields = getAllFields(fromRestObj.getClass());
-		for (Field field : fields) {
-			if (field.getAnnotation(JsonProperty.class) != null) {
-				PropertyDescriptor pd = getPropertyDescriptor(toRestObj, field.getName());
-				if (pd != null) {
-					Object value = getRestObjectProperty(pd, fromRestObj);
-					setRestObjectProperty(pd, toRestObj, value);
-				}
-			}
-		}
-	}
+        List<Field> fields = getAllFields(fromRestObj.getClass());
+        for (Field field : fields) {
+            if (field.getAnnotation(JsonProperty.class) != null) {
+                PropertyDescriptor pd = getPropertyDescriptor(toRestObj, field.getName());
+                if (pd != null) {
+                    Object value = getRestObjectProperty(pd, fromRestObj);
+                    setRestObjectProperty(pd, toRestObj, value);
+                }
+            }
+        }
+    }
 
-	public static <T extends RestObject> void setTemplateId(T restObj, RestObject template) throws RestException {
-		PropertyDescriptor pd = getPropertyDescriptor(restObj, "templateID");
-		if (pd != null) {
-			setRestObjectProperty(pd, restObj, template.getId());
-		} else {
-			throw new RestException(String.format("Cannot instantiate a child that does not have a templateID property: %s", restObj));
-		}
-	}
+    public static <T extends RestObject> void setTemplateId(T restObj, RestObject template) throws RestException {
+        PropertyDescriptor pd = getPropertyDescriptor(restObj, "templateID");
+        if (pd != null) {
+            setRestObjectProperty(pd, restObj, template.getId());
+        } else {
+            throw new RestException(String.format("Cannot instantiate a child that does not have a templateID property: %s", restObj));
+        }
+    }
 
-	public static String getResponseChoiceParam(Integer responseChoice) {
-		if (responseChoice == null) {
-			return null;
-		} else {
-			return RESPONSE_CHOICE_PARAM + '=' + responseChoice.intValue();
-		}
-	}
+    public static String getResponseChoiceParam(Integer responseChoice) {
+        if (responseChoice == null) {
+            return null;
+        } else {
+            return RESPONSE_CHOICE_PARAM + '=' + responseChoice.intValue();
+        }
+    }
 
-	private static PropertyDescriptor getPropertyDescriptor(RestObject restObject, String propertyName) throws RestException {
-		try {
-			for (PropertyDescriptor pd : Introspector.getBeanInfo(restObject.getClass()).getPropertyDescriptors()) {
-				if (pd.getName().equals(propertyName)) {
-					return pd;
-				}
-			}
-		} catch (IntrospectionException ex) {
-			throw new RestException(ex);
-		}
+    private static PropertyDescriptor getPropertyDescriptor(RestObject restObject, String propertyName) throws RestException {
+        try {
+            for (PropertyDescriptor pd : Introspector.getBeanInfo(restObject.getClass()).getPropertyDescriptors()) {
+                if (pd.getName().equals(propertyName)) {
+                    return pd;
+                }
+            }
+        } catch (IntrospectionException ex) {
+            throw new RestException(ex);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private static void setRestObjectProperty(PropertyDescriptor pd, RestObject restObject, Object value) throws RestException {
-		try {
-			pd.getWriteMethod().invoke(restObject, value);
-		} catch (IllegalAccessException | InvocationTargetException ex) {
-			throw new RestException(ex);
-		}
-	}
+    private static void setRestObjectProperty(PropertyDescriptor pd, RestObject restObject, Object value) throws RestException {
+        try {
+            pd.getWriteMethod().invoke(restObject, value);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            throw new RestException(ex);
+        }
+    }
 
-	private static Object getRestObjectProperty(PropertyDescriptor pd, RestObject restObject) throws RestException {
-		try {
-			return pd.getReadMethod().invoke(restObject);
-		} catch (IllegalAccessException | InvocationTargetException ex) {
-			throw new RestException(ex);
-		}
-	}
+    private static Object getRestObjectProperty(PropertyDescriptor pd, RestObject restObject) throws RestException {
+        try {
+            return pd.getReadMethod().invoke(restObject);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            throw new RestException(ex);
+        }
+    }
 
-	private static List<Field> getAllFields(List<Field> fields, Class<?> type) {
-		fields.addAll(Arrays.asList(type.getDeclaredFields()));
+    private static List<Field> getAllFields(List<Field> fields, Class<?> type) {
+        fields.addAll(Arrays.asList(type.getDeclaredFields()));
 
-		if (type.getSuperclass() != null) {
-			fields = getAllFields(fields, type.getSuperclass());
-		}
+        if (type.getSuperclass() != null) {
+            fields = getAllFields(fields, type.getSuperclass());
+        }
 
-		return fields;
-	}
+        return fields;
+    }
 
-	private static List<Field> getAllFields(Class<?> type) {
-		return getAllFields(new LinkedList<Field>(), type);
-	}
+    private static List<Field> getAllFields(Class<?> type) {
+        return getAllFields(new LinkedList<Field>(), type);
+    }
 }

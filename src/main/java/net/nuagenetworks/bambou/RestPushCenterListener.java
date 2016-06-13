@@ -30,5 +30,5 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface RestPushCenterListener {
 
-	void onEvent(JsonNode event);
+    void onEvent(JsonNode event);
 }

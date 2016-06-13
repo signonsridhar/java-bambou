@@ -46,163 +46,163 @@ import net.nuagenetworks.bambou.model.Events;
 
 public class RestPushCenter {
 
-	private static final Logger logger = LoggerFactory.getLogger(RestPushCenter.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestPushCenter.class);
 
-	private static final int SLEEP_PERIOD_IN_MILLIS = 2000;
+    private static final int SLEEP_PERIOD_IN_MILLIS = 2000;
 
-	private String url;
-	private boolean stopPollingEvents;
-	private boolean isRunning;
-	private RestSession<?> session;
-	private List<RestPushCenterListener> listeners = new ArrayList<RestPushCenterListener>();
-	private ExecutorService executor = Executors.newFixedThreadPool(1);
-	private Future<Void> pollingTaskFuture;
+    private String url;
+    private boolean stopPollingEvents;
+    private boolean isRunning;
+    private RestSession<?> session;
+    private List<RestPushCenterListener> listeners = new ArrayList<RestPushCenterListener>();
+    private ExecutorService executor = Executors.newFixedThreadPool(1);
+    private Future<Void> pollingTaskFuture;
 
-	protected RestPushCenter(RestSession<?> session) {
-		this.session = session;
-	}
+    protected RestPushCenter(RestSession<?> session) {
+        this.session = session;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public boolean isRunning() {
-		return isRunning;
-	}
+    public boolean isRunning() {
+        return isRunning;
+    }
 
-	public synchronized void start() {
-		// Don't go any further if polling task is already running
-		if (isRunning) {
-			return;
-		}
+    public synchronized void start() {
+        // Don't go any further if polling task is already running
+        if (isRunning) {
+            return;
+        }
 
-		// Clear the stop polling notification
-		stopPollingEvents = false;
+        // Clear the stop polling notification
+        stopPollingEvents = false;
 
-		// Start execution of polling task
-		pollingTaskFuture = executor.submit(new Callable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				pollEvents();
-				return null;
-			}
-		});
+        // Start execution of polling task
+        pollingTaskFuture = executor.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                pollEvents();
+                return null;
+            }
+        });
 
-		// Polling is now running
-		isRunning = true;
-	}
+        // Polling is now running
+        isRunning = true;
+    }
 
-	public synchronized void stop() {
-		// Don't go any further if polling task isn't running
-		if (!isRunning) {
-			return;
-		}
+    public synchronized void stop() {
+        // Don't go any further if polling task isn't running
+        if (!isRunning) {
+            return;
+        }
 
-		// Debug
-		logger.info("Stopping polling. Waiting for blocking REST call to return");
+        // Debug
+        logger.info("Stopping polling. Waiting for blocking REST call to return");
 
-		// Notify polling task to stop
-		stopPollingEvents = true;
+        // Notify polling task to stop
+        stopPollingEvents = true;
 
-		try {
-			// Wait for polling task to stop
-			pollingTaskFuture.get();
-		} catch (InterruptedException | ExecutionException ex) {
-		}
+        try {
+            // Wait for polling task to stop
+            pollingTaskFuture.get();
+        } catch (InterruptedException | ExecutionException ex) {
+        }
 
-		// Polling task completed
-		isRunning = false;
-	}
+        // Polling task completed
+        isRunning = false;
+    }
 
-	public void addListener(RestPushCenterListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
-	}
+    public void addListener(RestPushCenterListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
 
-	public void removeListener(RestPushCenterListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
-	}
+    public void removeListener(RestPushCenterListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
 
-	private void pollEvents() {
-		String uuid = null;
-		while (!stopPollingEvents) {
-			try {
-				// Debug
-				logger.info("Polling events from VSD using uuid=" + uuid);
+    private void pollEvents() {
+        String uuid = null;
+        while (!stopPollingEvents) {
+            try {
+                // Debug
+                logger.info("Polling events from VSD using uuid=" + uuid);
 
-				// Get the next events
-				ResponseEntity<Events> response = sendRequest(uuid);
-				Events events = (Events) response.getBody();
-				if (events == null) {
-					// No events, poll again
-					continue;
-				}
+                // Get the next events
+                ResponseEntity<Events> response = sendRequest(uuid);
+                Events events = (Events) response.getBody();
+                if (events == null) {
+                    // No events, poll again
+                    continue;
+                }
 
-				if (stopPollingEvents) {
-					break;
-				}
+                if (stopPollingEvents) {
+                    break;
+                }
 
-				// Debug
-				logger.info("Received events: " + events);
+                // Debug
+                logger.info("Received events: " + events);
 
-				// Process the events received
-				for (JsonNode event : events.getEvents()) {
-					// Take a snapshot of the listeners
-					List<RestPushCenterListener> listenersSnapshot = null;
-					synchronized (listeners) {
-						listenersSnapshot = new ArrayList<>(listeners);
-					}
+                // Process the events received
+                for (JsonNode event : events.getEvents()) {
+                    // Take a snapshot of the listeners
+                    List<RestPushCenterListener> listenersSnapshot = null;
+                    synchronized (listeners) {
+                        listenersSnapshot = new ArrayList<>(listeners);
+                    }
 
-					// Notify the listeners
-					for (RestPushCenterListener listener : listenersSnapshot) {
-						listener.onEvent(event);
-					}
-				}
+                    // Notify the listeners
+                    for (RestPushCenterListener listener : listenersSnapshot) {
+                        listener.onEvent(event);
+                    }
+                }
 
-				// Get the next UUID to query for
-				uuid = events.getUuid();
-			} catch (Exception ex) {
-				// Error
-				logger.error("Error", ex);
+                // Get the next UUID to query for
+                uuid = events.getUuid();
+            } catch (Exception ex) {
+                // Error
+                logger.error("Error", ex);
 
-				// Pause and try again
-				try {
-					Thread.sleep(SLEEP_PERIOD_IN_MILLIS);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
+                // Pause and try again
+                try {
+                    Thread.sleep(SLEEP_PERIOD_IN_MILLIS);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
 
-		// Debug
-		logger.info("Polling stopped");
-	}
+        // Debug
+        logger.info("Polling stopped");
+    }
 
-	private ResponseEntity<Events> sendRequest(String uuid) throws RestException {
-		// Build the url and query parameter for the request
-		String eventsUrl = String.format("%s/events", url);
-		String params = (uuid != null) ? "uuid=" + uuid : null;
+    private ResponseEntity<Events> sendRequest(String uuid) throws RestException {
+        // Build the url and query parameter for the request
+        String eventsUrl = String.format("%s/events", url);
+        String params = (uuid != null) ? "uuid=" + uuid : null;
 
-		ResponseEntity<Events> response = null;
-		try {
-			// Send poll request to server
-			response = session.sendRequestWithRetry(HttpMethod.GET, eventsUrl, params, null, null, Events.class);
-		} catch (RestStatusCodeException ex) {
-			// In case of a 400/Bad Request: re-send request without uuid in
-			// order to get a new one
-			if (ex.getStatusCode() == HttpStatus.BAD_REQUEST) {
-				response = sendRequest(null);
-			} else {
-				throw ex;
-			}
-		}
+        ResponseEntity<Events> response = null;
+        try {
+            // Send poll request to server
+            response = session.sendRequestWithRetry(HttpMethod.GET, eventsUrl, params, null, null, Events.class);
+        } catch (RestStatusCodeException ex) {
+            // In case of a 400/Bad Request: re-send request without uuid in
+            // order to get a new one
+            if (ex.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                response = sendRequest(null);
+            } else {
+                throw ex;
+            }
+        }
 
-		return response;
-	}
+        return response;
+    }
 }

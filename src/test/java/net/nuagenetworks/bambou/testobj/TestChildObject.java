@@ -33,28 +33,28 @@ import net.nuagenetworks.bambou.annotation.RestEntity;
 
 @RestEntity(restName = "childobject", resourceName = "childobject")
 public class TestChildObject extends RestObject {
-	
-	private static final long serialVersionUID = 1L;
 
-	@JsonProperty(value = "templateID")
-	protected String templateID;
+    private static final long serialVersionUID = 1L;
 
-	@JsonProperty("myOtherProperty")
-	protected String myOtherProperty;
+    @JsonProperty(value = "templateID")
+    protected String templateID;
 
-	public String getTemplateID() {
-		return templateID;
-	}
+    @JsonProperty("myOtherProperty")
+    protected String myOtherProperty;
 
-	public void setTemplateID(String templateId) {
-		this.templateID = templateId;
-	}
+    public String getTemplateID() {
+        return templateID;
+    }
 
-	public String getMyOtherProperty() {
-		return myOtherProperty;
-	}
+    public void setTemplateID(String templateId) {
+        this.templateID = templateId;
+    }
 
-	public void setMyOtherProperty(String myOtherProperty) {
-		this.myOtherProperty = myOtherProperty;
-	}
+    public String getMyOtherProperty() {
+        return myOtherProperty;
+    }
+
+    public void setMyOtherProperty(String myOtherProperty) {
+        this.myOtherProperty = myOtherProperty;
+    }
 }

@@ -34,28 +34,28 @@ import net.nuagenetworks.bambou.annotation.RestEntity;
 
 @RestEntity(restName = "object", resourceName = "object")
 public class TestObject extends RestObject {
-	
-	private static final long serialVersionUID = 1L;
 
-	@JsonProperty("myProperty")
-	protected String myProperty;
+    private static final long serialVersionUID = 1L;
 
-	@JsonIgnore
-	private TestChildObjectFetcher childObjectFetcher;
+    @JsonProperty("myProperty")
+    protected String myProperty;
 
-	public TestObject() {
-		childObjectFetcher = new TestChildObjectFetcher(this);
-	}
+    @JsonIgnore
+    private TestChildObjectFetcher childObjectFetcher;
 
-	public String getMyProperty() {
-		return myProperty;
-	}
+    public TestObject() {
+        childObjectFetcher = new TestChildObjectFetcher(this);
+    }
 
-	public void setMyProperty(String myProperty) {
-		this.myProperty = myProperty;
-	}
+    public String getMyProperty() {
+        return myProperty;
+    }
 
-	public TestChildObjectFetcher getChildObjectFetcher() {
-		return childObjectFetcher;
-	}
+    public void setMyProperty(String myProperty) {
+        this.myProperty = myProperty;
+    }
+
+    public TestChildObjectFetcher getChildObjectFetcher() {
+        return childObjectFetcher;
+    }
 }

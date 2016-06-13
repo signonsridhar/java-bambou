@@ -37,8 +37,8 @@ import net.nuagenetworks.bambou.service.RestClientTemplate;
 @ComponentScan("net.nuagenetworks")
 public class SpringConfig {
 
-	@Bean
-	public RestOperations restOperations() {
-		return new RestClientTemplate();
-	}
+    @Bean
+    public RestOperations restOperations() {
+        return new RestClientTemplate();
+    }
 }

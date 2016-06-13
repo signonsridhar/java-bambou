@@ -49,29 +49,29 @@ import net.nuagenetworks.bambou.spring.TestSpringConfig;
 @ContextConfiguration(classes = TestSpringConfig.class, loader = AnnotationConfigContextLoader.class)
 public class RestClientServiceTest {
 
-	@Autowired
-	private RestClientService restService;
+    @Autowired
+    private RestClientService restService;
 
-	@Autowired
-	private RestOperations restOperations;
+    @Autowired
+    private RestOperations restOperations;
 
-	@Test
-	public void testSendRequest() throws RestException {
-		HttpMethod method = HttpMethod.GET;
-		String url = "http://vsd";
-		String content = "test";
+    @Test
+    public void testSendRequest() throws RestException {
+        HttpMethod method = HttpMethod.GET;
+        String url = "http://vsd";
+        String content = "test";
 
-		EasyMock.reset(restOperations);
-		Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
-				.andReturn(new ResponseEntity<String>(HttpStatus.OK));
-		EasyMock.replay(restOperations);
+        EasyMock.reset(restOperations);
+        Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
+                .andReturn(new ResponseEntity<String>(HttpStatus.OK));
+        EasyMock.replay(restOperations);
 
-		ResponseEntity<String> response = restService.sendRequest(method, url, null, content, String.class);
+        ResponseEntity<String> response = restService.sendRequest(method, url, null, content, String.class);
 
-		Assert.assertNotNull(response);
-		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assert.assertNotNull(response);
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-		EasyMock.verify(restOperations);
-	}
+        EasyMock.verify(restOperations);
+    }
 }

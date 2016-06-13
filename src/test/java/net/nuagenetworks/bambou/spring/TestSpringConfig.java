@@ -39,14 +39,14 @@ import net.nuagenetworks.bambou.testobj.TestRootObject;
 @Configuration
 @ComponentScan("net.nuagenetworks")
 public class TestSpringConfig {
-	@Bean
-	public RestOperations restOperations() {
-		return EasyMock.createStrictMock(RestOperations.class);
-	}
+    @Bean
+    public RestOperations restOperations() {
+        return EasyMock.createStrictMock(RestOperations.class);
+    }
 
-	@Bean
-	@Scope("prototype")
-	public RestSession<TestRootObject> restSession() {
-		return new RestSession<TestRootObject>(TestRootObject.class);
-	}
+    @Bean
+    @Scope("prototype")
+    public RestSession<TestRootObject> restSession() {
+        return new RestSession<TestRootObject>(TestRootObject.class);
+    }
 }

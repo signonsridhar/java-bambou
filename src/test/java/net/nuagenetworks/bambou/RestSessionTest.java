@@ -56,120 +56,121 @@ import net.nuagenetworks.bambou.testobj.TestRootObject;
 @ContextConfiguration(classes = TestSpringConfig.class, loader = AnnotationConfigContextLoader.class)
 public class RestSessionTest {
 
-	@Autowired
-	private RestOperations restOperations;
+    @Autowired
+    private RestOperations restOperations;
 
-	@Autowired
-	private RestSession<TestRootObject> session;
+    @Autowired
+    private RestSession<TestRootObject> session;
 
-	private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
-	@After
-	public void resetTest() {
-		session.reset();
-	}
+    @After
+    public void resetTest() {
+        session.reset();
+    }
 
-	@Test
-	public void testNoSessionAvailable() {
-		Assert.assertNull(RestSession.getCurrentSession());
-	}
+    @Test
+    public void testNoSessionAvailable() {
+        Assert.assertNull(RestSession.getCurrentSession());
+    }
 
-	@Test
-	public void testStartSession() throws RestException, RestClientException, JsonProcessingException {
-		RestSession<TestRootObject> session = startSession();
-		Assert.assertEquals(session, RestSession.getCurrentSession());
-		Assert.assertEquals("12345", session.getRootObject().getApiKey());
-		Assert.assertEquals("TestValue", session.getRootObject().getTestAttr());
-	}
+    @Test
+    public void testStartSession() throws RestException, RestClientException, JsonProcessingException {
+        RestSession<TestRootObject> session = startSession();
+        Assert.assertEquals(session, RestSession.getCurrentSession());
+        Assert.assertEquals("12345", session.getRootObject().getApiKey());
+        Assert.assertEquals("TestValue", session.getRootObject().getTestAttr());
+    }
 
-	@Test
-	public void testStartSessionWithWrongCredentials() throws RestException, RestClientException, JsonProcessingException {
-		try {
-			// Simulate a login with wrong credentials by sending a 401/Unauthorized response back to the client
-			startSession(HttpStatus.UNAUTHORIZED, "");
-			
-			// We should get an exception
-			Assert.assertTrue(false);
-		} catch(RestStatusCodeException ex) {
-			// Check for expected exception message
-			Assert.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
-		}
-	}
+    @Test
+    public void testStartSessionWithWrongCredentials() throws RestException, RestClientException, JsonProcessingException {
+        try {
+            // Simulate a login with wrong credentials by sending a
+            // 401/Unauthorized response back to the client
+            startSession(HttpStatus.UNAUTHORIZED, "");
 
-	@Test
-	public void testResetSession() throws RestException, RestClientException, JsonProcessingException {
-		RestSession<?> session = startSession();
-		Assert.assertEquals(session, RestSession.getCurrentSession());
+            // We should get an exception
+            Assert.assertTrue(false);
+        } catch (RestStatusCodeException ex) {
+            // Check for expected exception message
+            Assert.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
+        }
+    }
 
-		session.reset();
-		Assert.assertEquals(null, RestSession.getCurrentSession());
-	}
+    @Test
+    public void testResetSession() throws RestException, RestClientException, JsonProcessingException {
+        RestSession<?> session = startSession();
+        Assert.assertEquals(session, RestSession.getCurrentSession());
 
-	@Test
-	public void testSendRequest() throws RestException {
-		String username = "martin";
-		String password = "martin";
-		String enterprise = "martin";
-		HttpMethod method = HttpMethod.GET;
-		String url = "http://vsd";
-		String content = "test";
+        session.reset();
+        Assert.assertEquals(null, RestSession.getCurrentSession());
+    }
 
-		session.setUsername(username);
-		session.setPassword(password);
-		session.setEnterprise(enterprise);
+    @Test
+    public void testSendRequest() throws RestException {
+        String username = "martin";
+        String password = "martin";
+        String enterprise = "martin";
+        HttpMethod method = HttpMethod.GET;
+        String url = "http://vsd";
+        String content = "test";
 
-		EasyMock.reset(restOperations);
-		Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
-				.andReturn(new ResponseEntity<String>(HttpStatus.OK));
-		EasyMock.replay(restOperations);
+        session.setUsername(username);
+        session.setPassword(password);
+        session.setEnterprise(enterprise);
 
-		ResponseEntity<String> response = session.sendRequestWithRetry(method, url, null, null, content, String.class);
+        EasyMock.reset(restOperations);
+        Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
+                .andReturn(new ResponseEntity<String>(HttpStatus.OK));
+        EasyMock.replay(restOperations);
 
-		HttpHeaders requestHeaders = capturedHttpEntity.getValue().getHeaders();
-		Assert.assertEquals(3, requestHeaders.size());
-		Assert.assertEquals("application/json", requestHeaders.getFirst("Content-Type"));
-		Assert.assertEquals(enterprise, requestHeaders.getFirst("X-Nuage-Organization"));
-		Assert.assertEquals("XREST bWFydGluOm1hcnRpbg==", requestHeaders.getFirst("Authorization"));
+        ResponseEntity<String> response = session.sendRequestWithRetry(method, url, null, null, content, String.class);
 
-		Assert.assertNotNull(response);
-		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        HttpHeaders requestHeaders = capturedHttpEntity.getValue().getHeaders();
+        Assert.assertEquals(3, requestHeaders.size());
+        Assert.assertEquals("application/json", requestHeaders.getFirst("Content-Type"));
+        Assert.assertEquals(enterprise, requestHeaders.getFirst("X-Nuage-Organization"));
+        Assert.assertEquals("XREST bWFydGluOm1hcnRpbg==", requestHeaders.getFirst("Authorization"));
 
-		EasyMock.verify(restOperations);
-	}
+        Assert.assertNotNull(response);
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-	private RestSession<TestRootObject> startSession() throws RestException, RestClientException, JsonProcessingException {
-		TestRootObject rootObject = new TestRootObject();
-		rootObject.setApiKey("12345");
-		rootObject.setTestAttr("TestValue");
+        EasyMock.verify(restOperations);
+    }
 
-		return startSession(HttpStatus.OK, mapper.writeValueAsString(Arrays.asList(rootObject)));
-	}
-	
-	private RestSession<TestRootObject> startSession(HttpStatus responseStatusCode, String responseContent) throws RestException, RestClientException, JsonProcessingException {
-		String username = "martin";
-		String password = "martin";
-		String enterprise = "martin";
-		String apiUrl = "http://vsd";
-		String apiPrefix = "api";
-		double version = 2.1;
+    private RestSession<TestRootObject> startSession() throws RestException, RestClientException, JsonProcessingException {
+        TestRootObject rootObject = new TestRootObject();
+        rootObject.setApiKey("12345");
+        rootObject.setTestAttr("TestValue");
 
-		EasyMock.reset(restOperations);
-		EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
-				EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class)))
-				.andReturn(new ResponseEntity<String>(responseContent, responseStatusCode));
-		EasyMock.replay(restOperations);
+        return startSession(HttpStatus.OK, mapper.writeValueAsString(Arrays.asList(rootObject)));
+    }
 
-		session.setUsername(username);
-		session.setPassword(password);
-		session.setEnterprise(enterprise);
-		session.setApiUrl(apiUrl);
-		session.setApiPrefix(apiPrefix);
-		session.setVersion(version);
-		session.start();
+    private RestSession<TestRootObject> startSession(HttpStatus responseStatusCode, String responseContent)
+            throws RestException, RestClientException, JsonProcessingException {
+        String username = "martin";
+        String password = "martin";
+        String enterprise = "martin";
+        String apiUrl = "http://vsd";
+        String apiPrefix = "api";
+        double version = 2.1;
 
-		EasyMock.verify(restOperations);
+        EasyMock.reset(restOperations);
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(apiUrl + '/' + apiPrefix + "/v2_1/root"), EasyMock.eq(HttpMethod.GET),
+                EasyMock.anyObject(HttpEntity.class), EasyMock.eq(String.class))).andReturn(new ResponseEntity<String>(responseContent, responseStatusCode));
+        EasyMock.replay(restOperations);
 
-		return session;
-	}
+        session.setUsername(username);
+        session.setPassword(password);
+        session.setEnterprise(enterprise);
+        session.setApiUrl(apiUrl);
+        session.setApiPrefix(apiPrefix);
+        session.setVersion(version);
+        session.start();
+
+        EasyMock.verify(restOperations);
+
+        return session;
+    }
 }
