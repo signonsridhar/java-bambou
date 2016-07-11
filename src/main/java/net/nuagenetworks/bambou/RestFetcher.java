@@ -281,7 +281,7 @@ public class RestFetcher<T extends RestObject> extends ArrayList<T>implements Re
             for (Iterator<String> iter = Arrays.asList(groupBy).iterator(); iter.hasNext();) {
                 header += iter.next();
                 if (iter.hasNext()) {
-                    header += ", ";
+                    header += ",";
                 }
 
             }
