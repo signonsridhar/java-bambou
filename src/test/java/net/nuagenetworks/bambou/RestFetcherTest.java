@@ -357,7 +357,7 @@ public class RestFetcherTest {
         Assert.assertEquals(String.valueOf(page), headers.get("X-Nuage-Page").get(0));
         Assert.assertEquals(String.valueOf(pageSize), headers.get("X-Nuage-PageSize").get(0));
         Assert.assertEquals(String.valueOf(true), headers.get("X-Nuage-GroupBy").get(0));
-        Assert.assertEquals(groupBy[0] + ", " + groupBy[1], headers.get("X-Nuage-Attributes").get(0));
+        Assert.assertEquals(groupBy[0] + "," + groupBy[1], headers.get("X-Nuage-Attributes").get(0));
     }
 
     @Test
@@ -395,7 +395,7 @@ public class RestFetcherTest {
         Assert.assertEquals(String.valueOf(page), headers.get("X-Nuage-Page").get(0));
         Assert.assertEquals(String.valueOf(pageSize), headers.get("X-Nuage-PageSize").get(0));
         Assert.assertEquals(String.valueOf(true), headers.get("X-Nuage-GroupBy").get(0));
-        Assert.assertEquals(groupBy[0] + ", " + groupBy[1], headers.get("X-Nuage-Attributes").get(0));
+        Assert.assertEquals(groupBy[0] + "," + groupBy[1], headers.get("X-Nuage-Attributes").get(0));
     }
 
     @Test
@@ -433,7 +433,7 @@ public class RestFetcherTest {
         Assert.assertEquals(String.valueOf(page), headers.get("X-Nuage-Page").get(0));
         Assert.assertEquals(String.valueOf(pageSize), headers.get("X-Nuage-PageSize").get(0));
         Assert.assertEquals(String.valueOf(true), headers.get("X-Nuage-GroupBy").get(0));
-        Assert.assertEquals(groupBy[0] + ", " + groupBy[1], headers.get("X-Nuage-Attributes").get(0));
+        Assert.assertEquals(groupBy[0] + "," + groupBy[1], headers.get("X-Nuage-Attributes").get(0));
     }
 
     @Test
@@ -476,7 +476,7 @@ public class RestFetcherTest {
         Assert.assertEquals(String.valueOf(page), headers.get("X-Nuage-Page").get(0));
         Assert.assertEquals(String.valueOf(pageSize), headers.get("X-Nuage-PageSize").get(0));
         Assert.assertEquals(String.valueOf(true), headers.get("X-Nuage-GroupBy").get(0));
-        Assert.assertEquals(groupBy[0] + ", " + groupBy[1], headers.get("X-Nuage-Attributes").get(0));
+        Assert.assertEquals(groupBy[0] + "," + groupBy[1], headers.get("X-Nuage-Attributes").get(0));
     }
 
     @Test
