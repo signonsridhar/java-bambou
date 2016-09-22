@@ -101,8 +101,6 @@ public class RestClientService {
                         JsonNode propertyNode = error.get("property");
                         if (propertyNode != null) {
                             errorMessage = propertyNode.asText() + ": " + errorMessage;
-                        } else {
-                            errorMessage = statusCode + " " + statusCode.getReasonPhrase();
                         }
                     } else {
                         errorMessage = statusCode + " " + statusCode.getReasonPhrase();
