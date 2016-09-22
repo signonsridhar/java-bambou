@@ -74,4 +74,104 @@ public class RestClientServiceTest {
 
         EasyMock.verify(restOperations);
     }
+
+    @Test
+    public void testErrorResponseNoContent() throws RestException {
+        HttpMethod method = HttpMethod.GET;
+        String url = "http://vsd";
+        String content = "test";
+
+        EasyMock.reset(restOperations);
+        Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
+                .andReturn(new ResponseEntity<String>("", HttpStatus.NOT_FOUND));
+        EasyMock.replay(restOperations);
+
+        try {
+            restService.sendRequest(method, url, null, content, String.class);
+            Assert.assertFalse(false);
+        } catch (RestStatusCodeException ex) {
+            // Expect exception
+            Assert.assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+            Assert.assertEquals("404/Not Found", ex.getMessage());
+            Assert.assertNull(ex.getInternalErrorCode());
+        }
+
+        EasyMock.verify(restOperations);
+    }
+
+    @Test
+    public void testErrorResponseWithInternalErrorCode() throws RestException {
+        HttpMethod method = HttpMethod.GET;
+        String url = "http://vsd";
+        String content = "test";
+
+        EasyMock.reset(restOperations);
+        Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
+                .andReturn(new ResponseEntity<String>("{ \"internalErrorCode\": \"1001\" }", HttpStatus.NOT_FOUND));
+        EasyMock.replay(restOperations);
+
+        try {
+            restService.sendRequest(method, url, null, content, String.class);
+            Assert.assertFalse(false);
+        } catch (RestStatusCodeException ex) {
+            // Expect exception
+            Assert.assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+            Assert.assertEquals("404 Not Found", ex.getMessage());
+            Assert.assertEquals("1001", ex.getInternalErrorCode());
+        }
+
+        EasyMock.verify(restOperations);
+    }
+
+    @Test
+    public void testErrorResponseWithError() throws RestException {
+        HttpMethod method = HttpMethod.GET;
+        String url = "http://vsd";
+        String content = "test";
+
+        EasyMock.reset(restOperations);
+        Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
+                .andReturn(new ResponseEntity<String>("{\"errors\": [ { \"descriptions\": [ { \"description\": \"error message\" } ] } ] }", HttpStatus.NOT_FOUND));
+        EasyMock.replay(restOperations);
+
+        try {
+            restService.sendRequest(method, url, null, content, String.class);
+            Assert.assertFalse(false);
+        } catch (RestStatusCodeException ex) {
+            // Expect exception
+            Assert.assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+            Assert.assertEquals("404 Not Found", ex.getMessage());
+            Assert.assertNull(ex.getInternalErrorCode());
+        }
+
+        EasyMock.verify(restOperations);
+    }
+
+    @Test
+    public void testErrorResponseWithErrorAndProperty() throws RestException {
+        HttpMethod method = HttpMethod.GET;
+        String url = "http://vsd";
+        String content = "test";
+
+        EasyMock.reset(restOperations);
+        Capture<HttpEntity<?>> capturedHttpEntity = EasyMock.newCapture();
+        EasyMock.expect(restOperations.exchange(EasyMock.eq(url), EasyMock.eq(method), EasyMock.capture(capturedHttpEntity), EasyMock.eq(String.class)))
+                .andReturn(new ResponseEntity<String>("{\"errors\": [ { \"property\": \"My Property\", \"descriptions\": [ { \"description\": \"error message\" } ] } ] }", HttpStatus.NOT_FOUND));
+        EasyMock.replay(restOperations);
+
+        try {
+            restService.sendRequest(method, url, null, content, String.class);
+            Assert.assertFalse(false);
+        } catch (RestStatusCodeException ex) {
+            // Expect exception
+            Assert.assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+            Assert.assertEquals("My Property: error message", ex.getMessage());
+            Assert.assertNull(ex.getInternalErrorCode());
+        }
+
+        EasyMock.verify(restOperations);
+    }
 }

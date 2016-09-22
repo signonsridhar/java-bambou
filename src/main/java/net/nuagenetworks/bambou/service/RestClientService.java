@@ -104,6 +104,8 @@ public class RestClientService {
                         } else {
                             errorMessage = statusCode + " " + statusCode.getReasonPhrase();
                         }
+                    } else {
+                        errorMessage = statusCode + " " + statusCode.getReasonPhrase();
                     }
                     
                     // Try to retrieve an error code from the response 
