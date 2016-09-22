@@ -33,11 +33,13 @@ public class RestStatusCodeException extends RestException {
     private static final long serialVersionUID = 1L;
 
     private HttpStatus statusCode;
-
-    public RestStatusCodeException(HttpStatus statusCode, String message) {
+    private String internalErrorCode;
+    
+    public RestStatusCodeException(HttpStatus statusCode, String message, String internalErrorCode) {
         super(message);
 
         this.statusCode = statusCode;
+        this.internalErrorCode = internalErrorCode;
     }
 
     public RestStatusCodeException(HttpStatus statusCode) {
@@ -52,5 +54,9 @@ public class RestStatusCodeException extends RestException {
 
     public HttpStatus getStatusCode() {
         return statusCode;
+    }
+    
+    public String getInternalErrorCode() {
+        return internalErrorCode;
     }
 }

@@ -90,21 +90,32 @@ public class RestClientService {
 
                     // Try to retrieve an error message from the response
                     // content (in JSON format)
+                    String errorMessage = null;
                     JsonNode responseObj = objectMapper.readTree(responseBody);
-                    ArrayNode errors = (ArrayNode) responseObj.get("errors");
-                    if (errors != null) {
-                        JsonNode error = errors.get(0);
-                        ArrayNode descriptions = (ArrayNode) error.get("descriptions");
-                        JsonNode description = descriptions.get(0);
-                        String descriptionText = description.get("description").asText();
+                    ArrayNode errorsNode = (ArrayNode) responseObj.get("errors");
+                    if (errorsNode != null) {
+                        JsonNode error = errorsNode.get(0);
+                        ArrayNode descriptionsNode = (ArrayNode) error.get("descriptions");
+                        JsonNode descriptionNode = descriptionsNode.get(0);
+                        errorMessage = descriptionNode.get("description").asText();
                         JsonNode property = error.get("property");
                         if (property != null) {
-                            descriptionText = property.asText() + ": " + descriptionText;
+                            errorMessage = property.asText() + ": " + errorMessage;
+                        } else {
+                            errorMessage = statusCode + " " + statusCode.getReasonPhrase();
                         }
-                        throw new RestStatusCodeException(statusCode, descriptionText);
-                    } else {
-                        throw new RestStatusCodeException(statusCode, statusCode + " " + statusCode.getReasonPhrase());
                     }
+                    
+                    // Try to retrieve an error code from the response 
+                    // content (in JSON format)
+                    String internalErrorCode = null;
+                    JsonNode internalErrorCodeNode = responseObj.get("internalErrorCode");
+                    if (internalErrorCodeNode != null) {
+                        internalErrorCode = internalErrorCodeNode.textValue();
+                    }
+                    
+                    // Raise an exception with status code, description and internal error code
+                    throw new RestStatusCodeException(statusCode, errorMessage, internalErrorCode);
                 } catch (JsonParseException | JsonMappingException ex) {
                     // No error message available in the response
                     switch (statusCode.series()) {
