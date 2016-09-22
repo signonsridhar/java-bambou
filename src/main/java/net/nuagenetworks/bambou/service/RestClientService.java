@@ -98,9 +98,9 @@ public class RestClientService {
                         ArrayNode descriptionsNode = (ArrayNode) error.get("descriptions");
                         JsonNode descriptionNode = descriptionsNode.get(0);
                         errorMessage = descriptionNode.get("description").asText();
-                        JsonNode property = error.get("property");
-                        if (property != null) {
-                            errorMessage = property.asText() + ": " + errorMessage;
+                        JsonNode propertyNode = error.get("property");
+                        if (propertyNode != null) {
+                            errorMessage = propertyNode.asText() + ": " + errorMessage;
                         } else {
                             errorMessage = statusCode + " " + statusCode.getReasonPhrase();
                         }
