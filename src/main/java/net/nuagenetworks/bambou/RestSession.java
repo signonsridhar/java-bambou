@@ -280,7 +280,7 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
                 // in order to avoid infinite recursion
                 if (!(method == HttpMethod.GET && url.equals(restRootObj.getResourceUrl(this)))) {
                     // Re-authenticate the session and try to send the same
-                    // request again a new API key might get issued as a result
+                    // request again. A new API key might get issued as a result
                     reset();
                     authenticate();
 
