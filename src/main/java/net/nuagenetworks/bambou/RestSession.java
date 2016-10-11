@@ -325,7 +325,7 @@ public class RestSession<R extends RestRootObject> implements RestSessionOperati
 
     private String getAuthenticationHeader() {
         if (certificate != null) {
-            return String.format("XREST %s", Base64.encodeBase64String(String.format("%s:%s", certificate).getBytes()));
+            return String.format("XREST %s", Base64.encodeBase64String(String.format("%s:%s", username, "").getBytes()));
         } else if (apiKey != null) {
             return String.format("XREST %s", Base64.encodeBase64String(String.format("%s:%s", username, apiKey).getBytes()));
         } else {
