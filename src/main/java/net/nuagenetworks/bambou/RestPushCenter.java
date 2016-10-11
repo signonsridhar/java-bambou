@@ -135,7 +135,7 @@ public class RestPushCenter {
         while (!stopPollingEvents) {
             try {
                 // Debug
-                logger.info("Polling events from VSD using uuid=" + uuid);
+                logger.debug("Polling events from VSD using uuid=" + uuid);
 
                 // Get the next events
                 ResponseEntity<Events> response = sendRequest(uuid);
@@ -150,7 +150,7 @@ public class RestPushCenter {
                 }
 
                 // Debug
-                logger.info("Received events: " + events);
+                logger.debug("Received events: " + events);
 
                 // Process the events received
                 for (JsonNode event : events.getEvents()) {
