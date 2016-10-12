@@ -59,15 +59,15 @@ public class RestClientService {
 
     public <T, U> ResponseEntity<T> sendRequest(HttpMethod method, String url, HttpHeaders headers, U requestObject, Class<T> responseType)
             throws RestException {
-        logger.info(String.format("> %s %s", method, url));
-        logger.info(String.format("> headers: %s", headers));
-        logger.info(String.format("> data:\n  %s", BambouUtils.toString(requestObject)));
+        logger.debug(String.format("> %s %s", method, url));
+        logger.debug(String.format("> headers: %s", headers));
+        logger.debug(String.format("> data:\n  %s", BambouUtils.toString(requestObject)));
 
         ResponseEntity<T> response = sendRequest(method, url, new HttpEntity<U>(requestObject, headers), responseType);
 
-        logger.info(String.format("< %s %s [%s]", method, url, response.getStatusCode()));
-        logger.info(String.format("< headers: %s", response.getHeaders()));
-        logger.info(String.format("< data:\n  %s", BambouUtils.toString(response.getBody())));
+        logger.debug(String.format("< %s %s [%s]", method, url, response.getStatusCode()));
+        logger.debug(String.format("< headers: %s", response.getHeaders()));
+        logger.debug(String.format("< data:\n  %s", BambouUtils.toString(response.getBody())));
 
         return response;
     }
