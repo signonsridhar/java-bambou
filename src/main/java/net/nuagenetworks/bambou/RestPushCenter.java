@@ -55,7 +55,7 @@ public class RestPushCenter {
     private boolean isRunning;
     private RestSession<?> session;
     private List<RestPushCenterListener> listeners = new ArrayList<RestPushCenterListener>();
-    private ExecutorService executor = Executors.newFixedThreadPool(1);
+    private ExecutorService executor;
     private Future<Void> pollingTaskFuture;
 
     protected RestPushCenter(RestSession<?> session) {
@@ -79,6 +79,9 @@ public class RestPushCenter {
         if (isRunning) {
             return;
         }
+
+        // Create a new thread pool
+        executor = Executors.newFixedThreadPool(1);
 
         // Clear the stop polling notification
         stopPollingEvents = false;
@@ -113,6 +116,10 @@ public class RestPushCenter {
             pollingTaskFuture.get();
         } catch (InterruptedException | ExecutionException ex) {
         }
+
+        // Shutdown thread pool
+        executor.shutdown();
+        executor = null;
 
         // Polling task completed
         isRunning = false;
