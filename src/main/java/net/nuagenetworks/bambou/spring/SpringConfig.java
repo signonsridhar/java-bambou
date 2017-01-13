@@ -37,6 +37,14 @@ import net.nuagenetworks.bambou.service.RestClientTemplate;
 @ComponentScan("net.nuagenetworks")
 public class SpringConfig {
 
+    /////////////
+	///ADDED WORKAROUND, ComponentScan not working due to osgi/spring classpath issue.
+	@Bean 
+	public RestClientService restClientService() {
+		System.out.println("Config was called to return the rest client service!");
+        return new RestClientService();
+	}
+  
     @Bean
     public RestOperations restOperations() {
         return new RestClientTemplate();
